@@ -3,6 +3,7 @@ package com.tianniu.up.testprogect;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -22,12 +23,17 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.tianniu.up.testprogect.custom_view.InputMethodRelativeLayout;
+import com.tianniu.up.testprogect.intro.SimpleIntroActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +43,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,InputMethodRelativeLayout.OnSizeChangedListenner {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -49,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * TODO: remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
+            "123@163.com:123456", "bar@example.com:world"
     };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -60,7 +66,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
-    private View mLoginFormView;
+    private InputMethodRelativeLayout mLoginFormView;
+    private LinearLayout login_logo_layout_v;
+    private LinearLayout login_logo_layout_h;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +98,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        //取得InputMethodRelativeLayout组件
+        mLoginFormView = (InputMethodRelativeLayout) this.findViewById(R.id.loginpage);
+        //设置监听事件
+        mLoginFormView.setOnSizeChangedListenner(this) ;
+        //取得大LOGO布局
+        login_logo_layout_v = (LinearLayout) this.findViewById(R.id.login_logo_layout_v);
+        //取得小LOGO布局
+        login_logo_layout_h = (LinearLayout) this.findViewById(R.id.login_logo_layout_h);
+
     }
 
     private void populateAutoComplete() {
@@ -279,8 +296,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    @Override
+    public void onSizeChange(boolean flag, int w, int h) {
+        if(flag){//键盘弹出时
+
+            mLoginFormView.setPadding(0,-10,0,0);
+            login_logo_layout_v.setVisibility(View.GONE) ;
+            login_logo_layout_h.setVisibility(View.VISIBLE) ;
+        }else{ //键盘隐藏时
+            mLoginFormView.setPadding(0, 0, 0, 0);
+            login_logo_layout_v.setVisibility(View.VISIBLE) ;
+            login_logo_layout_h.setVisibility(View.GONE) ;
+        }
+    }
+
 
     private interface ProfileQuery {
+
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
                 ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
@@ -314,14 +346,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (InterruptedException e) {
                 return false;
             }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
+//
+//            for (String credential : DUMMY_CREDENTIALS) {
+//                String[] pieces = credential.split(":");
+//                if (pieces[0].equals(mEmail)) {
+//                    // Account exists, return true if the password matches.
+//                    return pieces[1].equals(mPassword);
+//                }
+//            }
 
             // TODO: register the new account here.
             return true;
@@ -331,13 +363,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
+            Intent intent = new Intent(LoginActivity.this, SimpleIntroActivity.class);
+            LoginActivity.this.startActivity(intent);
+//            if (success) {
+//
+//            } else {
+//                mPasswordView.setError(getString(R.string.error_incorrect_password));
+//                mPasswordView.requestFocus();
+//            }
         }
 
         @Override
