@@ -1,4 +1,4 @@
-package com.tianniu.up.testprogect;
+package com.tianniu.up.testprogect.login;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -23,7 +23,6 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -32,6 +31,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tianniu.up.testprogect.R;
 import com.tianniu.up.testprogect.custom_view.InputMethodRelativeLayout;
 import com.tianniu.up.testprogect.intro.SimpleIntroActivity;
 
