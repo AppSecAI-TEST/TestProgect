@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/cargomaster" />
             <option value="$PROJECT_DIR$/intorlibrary" />
             <option value="$PROJECT_DIR$/vehiclemaster" />
           </set>

@@ -1,1 +1,1 @@
-include ':app', ':intorlibrary', ':vehiclemaster'
+include ':app', ':intorlibrary', ':vehiclemaster', ':cargomaster'
