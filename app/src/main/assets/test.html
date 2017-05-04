@@ -1,0 +1,72 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title id="tyt_title">走走走</title>
+	<meta id="tyt_description" name="description" content="走走走，游游游，不学无术我不发愁，逢人不说真心话，全凭三寸烂舌头，马屁拍得他腿抽筋，老虎嘴上揩点油，东南西北混饭吃，坑蒙拐骗最拿手！！">
+</head>
+<body>
+<img style="width: 0;height: 0;" id="tyt_previewimg" data-src="http://www.teyuntong.com/gw/public_images/logo.png" data-href="http://www.teyutong.com" alt="">
+ 
+
+<a href="http://www.teyuntong.com?share=1">游游游</a>
+ 
+</body>
+<script>
+	function share(){
+		var tyt_description = document.getElementById('tyt_description');
+		var tyt_previewimg = document.getElementById('tyt_previewimg');
+		var title = document.getElementById('tyt_title').innerHTML;
+		var content = tyt_description.getAttribute('content');
+		var imgUrl = tyt_previewimg.getAttribute('data-src');
+		var appUrl = tyt_previewimg.getAttribute('data-href');
+
+		var var1 = 'title:'+title+','+'content:'+content+','+'imgUrl:'+imgUrl+','+'appUrl:'+appUrl;
+
+
+		window.control.onShare(var1);
+	}
+
+	
+
+</script>
+</html>
+
+
+
+
+$(function() {
+$('#slides').slidesjs({
+width:640,
+height:270,
+navigation: false,
+play: {
+active: false,
+auto: true,
+interval: 3000,
+swap: true
+}
+
+}
+);
+
+function share(){
+var tyt_description = document.getElementById('tyt_description');
+var tyt_previewimg = document.getElementById('tyt_previewimg');
+var title = document.getElementById('tyt_title').innerHTML;
+var content = tyt_description.getAttribute('content');
+var imgUrl = tyt_previewimg.getAttribute('data-src');
+var appUrl = tyt_previewimg.getAttribute('data-href');
+
+var var1 = 'title:'+title+','+'content:'+content+','+'imgUrl:'+imgUrl+','+'appUrl:'+appUrl;
+
+// 以上获取值的部分，js传递java参数，建议使用基础类型比较稳定。
+// 另外是下面增加两行代码，window.control.onShare(appsql);这段是web反调用java本地代码，传递分享需要的参数。
+// return 这个，是因为在4.4Android版本上适用，简化我这边的执行程序。
+window.control.onShare(var1);
+
+}
+
+});
+

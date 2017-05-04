@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.util.SparseArrayCompat;
 import android.view.View;
 
+import com.tianniu.custom.OpApplication;
+
 /**
  * Created by Administrator on 2017/3/31 0031.
  */
@@ -17,6 +19,7 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
     public abstract void initListener();
     public abstract void initData();
     public abstract void processClick(View view);
+    public OpApplication mApp;
 
     @Override
     public void onClick(View v) {
@@ -26,6 +29,7 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
     @Override
     protected void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mApp = (OpApplication) getApplication();
         setContentView(getLayoutId());
     }
 

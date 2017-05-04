@@ -31,6 +31,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tianniu.custom.LocationManager;
+import com.tianniu.custom.view.base.BaseActivity;
 import com.tianniu.up.testprogect.R;
 import com.tianniu.custom.view.custom_view.InputMethodRelativeLayout;
 import com.tianniu.custom.view.base.SimpleIntroActivity;
@@ -43,7 +45,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,InputMethodRelativeLayout.OnSizeChangedListenner {
+public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor>, InputMethodRelativeLayout.OnSizeChangedListenner {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -54,9 +56,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * A dummy authentication store containing known user names and passwords.
      * TODO: remove after connecting to a real authentication system.
      */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "123@163.com:123456", "bar@example.com:world"
-    };
+    private static final String[] DUMMY_CREDENTIALS = new String[]{"123@163.com:123456", "bar@example.com:world"};
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -69,6 +69,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private InputMethodRelativeLayout mLoginFormView;
     private LinearLayout login_logo_layout_v;
     private LinearLayout login_logo_layout_h;
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_login;
+    }
+
+    @Override
+    public void initView() {
+
+    }
+
+    @Override
+    public void initListener() {
+
+    }
+
+    @Override
+    public void initData() {
+
+    }
+
+    @Override
+    public void processClick(View view) {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +128,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         //取得InputMethodRelativeLayout组件
         mLoginFormView = (InputMethodRelativeLayout) this.findViewById(R.id.loginpage);
         //设置监听事件
-        mLoginFormView.setOnSizeChangedListenner(this) ;
+        mLoginFormView.setOnSizeChangedListenner(this);
         //取得大LOGO布局
         login_logo_layout_v = (LinearLayout) this.findViewById(R.id.login_logo_layout_v);
         //取得小LOGO布局
@@ -127,14 +152,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return true;
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
+            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE).setAction(android.R.string.ok, new View.OnClickListener() {
+                @Override
+                @TargetApi(Build.VERSION_CODES.M)
+                public void onClick(View v) {
+                    requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+                }
+            });
         } else {
             requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
         }
@@ -145,8 +169,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Callback received when a permissions request has been completed.
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_READ_CONTACTS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 populateAutoComplete();
@@ -229,8 +252,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            mLoginFormView.animate().setDuration(shortAnimTime).alpha(show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
@@ -238,8 +260,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             });
 
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            mProgressView.animate().setDuration(shortAnimTime).alpha(show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -256,18 +277,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
+                 // Retrieve data rows for the device user's 'profile' contact.
+                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI, ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
 
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
+                 // Select only email addresses.
+                 ContactsContract.Contacts.Data.MIMETYPE + " = ?", new String[]{ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE},
 
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
+                 // Show primary email addresses first. Note that there won't be
+                 // a primary email address if the user hasn't specified one.
+                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
     @Override
@@ -289,34 +307,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
     }
 
     @Override
     public void onSizeChange(boolean flag, int w, int h) {
-        if(flag){//键盘弹出时
+        if (flag) {//键盘弹出时
 
-            mLoginFormView.setPadding(0,-10,0,0);
-            login_logo_layout_v.setVisibility(View.GONE) ;
-            login_logo_layout_h.setVisibility(View.VISIBLE) ;
-        }else{ //键盘隐藏时
+            mLoginFormView.setPadding(0, -10, 0, 0);
+            login_logo_layout_v.setVisibility(View.GONE);
+            login_logo_layout_h.setVisibility(View.VISIBLE);
+        } else { //键盘隐藏时
             mLoginFormView.setPadding(0, 0, 0, 0);
-            login_logo_layout_v.setVisibility(View.VISIBLE) ;
-            login_logo_layout_h.setVisibility(View.GONE) ;
+            login_logo_layout_v.setVisibility(View.VISIBLE);
+            login_logo_layout_h.setVisibility(View.GONE);
         }
     }
 
 
     private interface ProfileQuery {
 
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
+        String[] PROJECTION = {ContactsContract.CommonDataKinds.Email.ADDRESS, ContactsContract.CommonDataKinds.Email.IS_PRIMARY,};
 
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
@@ -339,14 +352,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
+            LocationManager.getInstance(mApp).initLoationInfoFordb();
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-//
+
 //            for (String credential : DUMMY_CREDENTIALS) {
 //                String[] pieces = credential.split(":");
 //                if (pieces[0].equals(mEmail)) {
@@ -363,7 +371,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-            Intent intent = new Intent(LoginActivity.this, SimpleIntroActivity.class);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class); //SimpleIntroActivity
             LoginActivity.this.startActivity(intent);
 //            if (success) {
 //
