@@ -2,6 +2,7 @@ package com.tianniu.custom.view;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -21,10 +22,11 @@ import android.widget.Toast;
 
 import com.tianniu.custom.api.OnLocationSelectorListener;
 import com.tianniu.custom.model.SelectedLocation;
+import com.tianniu.custom.view.base.BaseActivity;
 import com.tianniu.custom.view.custom_view.LocationSelectorPop;
 import com.tianniu.up.testprogect.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -39,7 +41,32 @@ public class MainActivity extends AppCompatActivity {
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
+    public static  ViewPager mViewPager;
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    public void initView() {
+
+    }
+
+    @Override
+    public void initListener() {
+
+    }
+
+    @Override
+    public void initData() {
+
+    }
+
+    @Override
+    public void processClick(View view) {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -116,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             TextView tvStartPostion = (TextView) rootView.findViewById(R.id.tv_start_postion);
@@ -125,12 +152,13 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(final View v) {
                     //测试地址选择器
                     Toast.makeText(v.getContext(),"test click",Toast.LENGTH_SHORT).show();
-                    new LocationSelectorPop(v.getContext(), null, new OnLocationSelectorListener() {
+                    new LocationSelectorPop(v.getContext(), v, new OnLocationSelectorListener() {
                         @Override
                         public void onSelectCancelListener(SelectedLocation selectedLocation) {
 
                         }
                     }).showLocationPop();
+
 
                 }
             });

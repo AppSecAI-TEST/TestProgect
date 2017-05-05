@@ -2,6 +2,7 @@ package com.tianniu.custom.view.base;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.util.SparseArrayCompat;
 import android.view.View;
 
@@ -11,7 +12,7 @@ import com.tianniu.custom.OpApplication;
  * Created by Administrator on 2017/3/31 0031.
  */
 
-public abstract class BaseActivity extends Activity implements View.OnClickListener{
+public abstract class BaseActivity extends FragmentActivity implements View.OnClickListener{
 
     private SparseArrayCompat<View> mViews = new SparseArrayCompat<>();
     public abstract int getLayoutId();
@@ -21,6 +22,8 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
     public abstract void processClick(View view);
     public OpApplication mApp;
 
+    public BaseActivity mActivity;
+
     @Override
     public void onClick(View v) {
         processClick(v);
@@ -29,6 +32,7 @@ public abstract class BaseActivity extends Activity implements View.OnClickListe
     @Override
     protected void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActivity = this;
         mApp = (OpApplication) getApplication();
         setContentView(getLayoutId());
     }

@@ -1,15 +1,15 @@
 package com.tianniu.custom.view.custom_view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewParent;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -22,6 +22,7 @@ import com.tianniu.custom.model.SelectedLocation;
 import com.tianniu.custom.utils.CommonOperate;
 import com.tianniu.up.testprogect.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -107,20 +108,39 @@ public class LocationSelectorPop {
     private View llQuanguo;
     private View llQuanguo2;
     private View llQuanguo3;
+    private List<View> locationViews = new ArrayList<View>(3);
 
     private void initPopupWindow() {
         LayoutInflater mInflater = LayoutInflater.from(mContext);;
         showView = (LinearLayout) mInflater.inflate(R.layout.pop_location_selector, null);
         ViewPager vpContent = (ViewPager)showView.findViewById(R.id.vp_content);
+
+        for (int i = 0; i < 3; i++) {
+            View itemView = mInflater.inflate(R.layout.ll_location_selector_item, null);
+            locationViews.add(itemView);
+        }
         vpContent.setAdapter(new PagerAdapter() {
+
             @Override
             public int getCount() {
-                return 0;
+                return locationViews.size();
+            }
+
+            @Override
+            public Object instantiateItem(ViewGroup container, int position) {
+                View view = (locationViews.get(position));
+                container.addView(view,0);
+                return locationViews.get(position);
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                container.removeView(locationViews.get(position));
             }
 
             @Override
             public boolean isViewFromObject(View view, Object object) {
-                return false;
+                return (view == object);
             }
         });
 
@@ -128,10 +148,6 @@ public class LocationSelectorPop {
 
 
     }
-
-
-
-
 
 
     private void initDataAndShow(boolean isIndex) {
@@ -154,8 +170,8 @@ public class LocationSelectorPop {
         if (mLocationPop == null) {
             initPopupWindow();
         }
-        CommonOperate.backgroundAlpha((Activity)showView.getContext(),0.5f);
 
+        CommonOperate.backgroundAlpha((FragmentActivity)showView.getContext(),0.5f);
 
         // 关闭监听
         mLocationPop.setOnDismissListener(new PopupWindow.OnDismissListener() {
@@ -164,17 +180,12 @@ public class LocationSelectorPop {
                 if(onDismissListener!=null) {
                     onDismissListener.onDismiss();
                 }
-                CommonOperate.backgroundAlpha((Activity)showView.getContext(),1.0f);
+                CommonOperate.backgroundAlpha((FragmentActivity)showView.getContext(),1.0f);
             }
         });
-        //  mLocationPop
         mLocationPop.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);//2016
         mLocationPop.setAnimationStyle(R.style.PopupWindowAnimation);
-
-
-
-
-
+        mLocationPop.showAsDropDown(mPositionView,0,0);
     }
 
     public void setOnDismissListener(PopupWindow.OnDismissListener onDismissListener) {
@@ -183,7 +194,7 @@ public class LocationSelectorPop {
 
     private PopupWindow.OnDismissListener onDismissListener;
     public void initPopStyle(View view) {
-        Activity viewContext = (Activity) view.getContext();
+        FragmentActivity viewContext = (FragmentActivity) view.getContext();
         WindowManager windowManager = viewContext.getWindowManager();
         DisplayMetrics displayMetrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(displayMetrics);
