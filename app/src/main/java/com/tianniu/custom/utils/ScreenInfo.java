@@ -2,6 +2,7 @@ package com.tianniu.custom.utils;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.DisplayMetrics;
 
 /**
@@ -73,6 +74,13 @@ public class ScreenInfo {
 	     density = metric.density;  
 	     densityDpi = metric.densityDpi;  
 	 }
-	 
-	
+
+	 public static int px2dip(Context context,float pxValue){
+		 float density = context.getResources().getDisplayMetrics().density;
+		 return  (int)(pxValue / density+0.5f);
+	 }
+	public static int dip2px(Context context,float dipValue){
+		float density = context.getResources().getDisplayMetrics().density;
+		return (int)(density * dipValue + 0.5f);
+	}
 }

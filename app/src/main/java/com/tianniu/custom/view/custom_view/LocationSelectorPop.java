@@ -2,9 +2,17 @@ package com.tianniu.custom.view.custom_view;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,8 +22,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 
+import com.tianniu.custom.LocationManager;
+import com.tianniu.custom.adapter.OnItemClickListener;
+import com.tianniu.custom.adapter.SelectorPopAdapter;
 import com.tianniu.custom.api.OnLocationSelectorListener;
 import com.tianniu.custom.model.LocationInfo;
 import com.tianniu.custom.model.SelectedLocation;
@@ -23,12 +35,19 @@ import com.tianniu.custom.utils.CommonOperate;
 import com.tianniu.up.testprogect.R;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 
 public class LocationSelectorPop {
     protected static final String TAG = "LocationSelector";
+    private LocationManager locationManager;
+    private TabLayout tabs_title;
+    private ViewPager vpContent;
+    private MyPageadapter myPageadapter;
+    private TabLayout.OnTabSelectedListener onTabSelectedListener;
 
+    private final int PROVINCE = 0 ,CITY = 1,COUNTY =2;
 
 
     public boolean isShowQuanGuo() {
@@ -63,17 +82,19 @@ public class LocationSelectorPop {
     public static int screen_w = 0;
     public static int screen_h = 0;
     public PopupWindow mLocationPop;
-//    private ListView proList, cityList, countList;
     private LinearLayout showView;
 
-    //    private LocationAdapter4 locationAdapter2;
-//    private LocationAdapter4 locationAdapter3;
-//    private LocationAdapter4 locationAdapter;
+
     private Button reset_btn;
 
     private String locationFlag;
 
     private int itemHeight=0;
+    /**
+     * 省份信息
+     */
+    private List<LocationInfo> provinces;
+
 
     public LocationSelectorPop(Context context, View positionView, OnLocationSelectorListener onLocationSelectorListener) {
         this.mContext = context;
@@ -109,44 +130,180 @@ public class LocationSelectorPop {
     private View llQuanguo2;
     private View llQuanguo3;
     private List<View> locationViews = new ArrayList<View>(3);
+    private List<RecyclerView> recyclerViews = new ArrayList<RecyclerView>(3);
+
+    private String[] tabsStr = new String[]{"请选择省","请选择市","请选择县"};
+
+
+    /**
+     * 更新页面数据
+     * @param viewPager
+     * @param locationInfo
+     */
+    private void updatePageAdapter(ViewPager viewPager,LocationInfo locationInfo){
+        String tempName = locationInfo.getName();
+        tabsStr[vpContent.getCurrentItem()] = tempName;
+        List<LocationInfo> areas = null;
+        int pageCount = vpContent.getAdapter().getCount();
+        int currentItem = viewPager.getCurrentItem();
+        switch (currentItem){
+            case PROVINCE:
+                areas = locationManager.getCity(locationInfo.getName());
+                break;
+            case CITY:
+                areas = locationManager.getArea(locationInfo.getName());
+                break;
+            case COUNTY:
+                mLocationPop.dismiss();
+                return;
+        }
+        switch (pageCount) {
+            case 1://仅包含省
+                generatePage(areas, tempName);
+                break;
+            case 2://包含市
+                if (currentItem == CITY){
+                    generatePage(areas, tempName);
+                }else {
+                    SelectorPopAdapter adapter = (SelectorPopAdapter) recyclerViews.get(pageCount-1).getAdapter();
+                    adapter.updateData(areas,tempName);
+                }
+
+                break;
+            case 3://包含三列省市县
+                if (currentItem ==PROVINCE){ //在第一列的时候删除第三列数据
+                    tabsStr = new String[]{tempName,"请选择市","请选择县"};
+                    MyPageadapter adapter = (MyPageadapter)viewPager.getAdapter();
+                    locationViews.remove(locationViews.size()-1);
+                    adapter.updateInfo(locationViews);
+                    recyclerViews.remove(recyclerViews.size()-1);
+                }
+                SelectorPopAdapter recyclerAdapter = (SelectorPopAdapter) recyclerViews.get(currentItem+1).getAdapter();
+                recyclerAdapter.updateData(areas,tempName);
+                break;
+        }
+        updateTabs();
+    }
+
+
+    /**
+     * 生产page页面
+     * @param locations  页面需要的数据集
+     * @param selectedToponymy   选择标识
+     * @return
+     */
+    private void generatePage(List<LocationInfo> locations,final String selectedToponymy){
+
+        if (locations == null || locations.size() == 0){
+            return ;
+        }
+        RecyclerView recyclerView = new RecyclerView(mContext);
+        recyclerView.setLayoutManager(new GridLayoutManager(mContext,4));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(mContext,5,10));
+
+        LayoutInflater mInflater = LayoutInflater.from(mContext);
+        ViewGroup itemView = (ViewGroup)mInflater.inflate(R.layout.ll_location_selector_item, null);
+        SelectorPopAdapter selectorPopAdapter = new SelectorPopAdapter(mContext, locations, selectedToponymy, new OnItemClickListener() {
+            @Override
+            public void onItemClickListener(View v, LocationInfo locationInfo) {
+                v.setBackgroundResource(R.color.color_dark_material_metaphor);
+                updatePageAdapter(vpContent,locationInfo);
+            }
+        });
+
+        recyclerViews.add(recyclerView);
+        recyclerView.setAdapter(selectorPopAdapter);
+        itemView.addView(recyclerView);
+        locationViews.add(itemView);
+        PagerAdapter adapter = vpContent.getAdapter();
+        if (adapter !=null){
+            adapter.notifyDataSetChanged();
+            vpContent.setCurrentItem(vpContent.getCurrentItem()+1);
+        }
+
+    }
+
+    /**
+     * 更新顶部标签
+     */
+    private void updateTabs(){
+        if (tabs_title == null) {
+            tabs_title = (TabLayout) showView.findViewById(R.id.tabs_title);
+            tabs_title.setTabGravity(TabLayout.GRAVITY_CENTER);
+        }
+        tabs_title.setupWithViewPager(vpContent);
+        for (int i = 0; i < tabs_title.getTabCount(); i++) {
+            TabLayout.Tab tabAt = tabs_title.getTabAt(i);
+
+
+            TextView textView = new TextView(mContext);
+            textView.setGravity(Gravity.CENTER);
+            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(160, ViewGroup.LayoutParams.MATCH_PARENT);
+            textView.setLayoutParams(layoutParams);
+            textView.setBackgroundResource(R.drawable.select_range_buttom);
+            tabAt.setCustomView(textView);
+            tabAt.select();
+            textView.setText(tabsStr[i]);
+
+//            tabAt.setCustomView(R.layout.tabs_location_select);
+//            TextView tabText = (TextView) tabAt.getCustomView().findViewById(R.id.tv_tabtext);
+//            tabAt.select();
+//            tabText.setText(tabsStr[i]);
+        }
+    }
 
     private void initPopupWindow() {
         LayoutInflater mInflater = LayoutInflater.from(mContext);;
         showView = (LinearLayout) mInflater.inflate(R.layout.pop_location_selector, null);
-        ViewPager vpContent = (ViewPager)showView.findViewById(R.id.vp_content);
+        vpContent = (ViewPager)showView.findViewById(R.id.vp_content);
+        locationManager = LocationManager.getInstance(mContext);
+        provinces = locationManager.getProvinces();
 
-        for (int i = 0; i < 3; i++) {
-            View itemView = mInflater.inflate(R.layout.ll_location_selector_item, null);
-            locationViews.add(itemView);
-        }
-        vpContent.setAdapter(new PagerAdapter() {
+        generatePage(provinces, "");
+        myPageadapter = new MyPageadapter(locationViews);
+        vpContent.setAdapter(myPageadapter);
+        updateTabs();
 
-            @Override
-            public int getCount() {
-                return locationViews.size();
-            }
-
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                View view = (locationViews.get(position));
-                container.addView(view,0);
-                return locationViews.get(position);
-            }
-
-            @Override
-            public void destroyItem(ViewGroup container, int position, Object object) {
-                container.removeView(locationViews.get(position));
-            }
-
-            @Override
-            public boolean isViewFromObject(View view, Object object) {
-                return (view == object);
-            }
-        });
 
         initPopStyle(showView);// 设置显示的效果
+    }
 
 
+    private class MyPageadapter extends PagerAdapter{
+
+        private List<View> views;
+
+        public MyPageadapter(List<View> views) {
+            this.views = views;
+        }
+
+        @Override
+        public int getCount() {
+            return views.size();
+        }
+
+
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            View view = (views.get(position));
+            container.addView(view,0);
+            return views.get(position);
+        }
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView(locationViews.get(position));
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return (view == object);
+        }
+
+        public void updateInfo(List<View> locationViews) {
+            this.views = locationViews;
+            notifyDataSetChanged();
+        }
     }
 
 

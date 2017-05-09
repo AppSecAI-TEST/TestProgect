@@ -26,13 +26,14 @@
 
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabIndicatorColor">@color/deepskyblue</item>
-        <item name="tabIndicatorHeight">2.5dp</item>
-        <item name="tabPaddingStart">12dp</item>
-        <item name="tabPaddingEnd">12dp</item>
-        <item name="tabBackground">?attr/selectableItemBackground</item>
-        <item name="tabSelectedTextColor">?android:textColorPrimary</item>
+        <item name="tabPaddingEnd">0dp</item>
+        <item name="tabPaddingStart">0dp</item>
+        <item name="tabIndicatorHeight">0dp</item>
     </style>
 
+
+    <!--<item name="tabBackground">?attr/selectableItemBackground</item>-->
+    <!--<item name="tabSelectedTextColor">?android:textColorPrimary</item>-->
 
     <!-- popupwindow动画 -->
     <style name="PopupWindowAnimation">

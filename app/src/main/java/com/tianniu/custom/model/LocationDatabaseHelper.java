@@ -22,47 +22,47 @@ import java.util.List;
 
 public class LocationDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private static String filePath = "data/data/com.tianniu/locationdb";
+    //    private static String filePath = "data/data/com.tianniu.up.testprogect/locationdb";
+    private static String filePath ;
     public static final String DATABASE_NAME = "locationdb";
     private static final int DATABASE_VERSION = 1;
     private Context mContext;
 
-    private final static int LOCATIONDATABASESVERSION=2;
+    private final static int LOCATIONDATABASESVERSION = 2;
 
     public LocationDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         mContext = context;
+        filePath = "data/data/" + mContext.getPackageName() + "/locationdb";
     }
 
 
-
-
-    public  void loadInitLocationDatabases(Context context){
-        SharedPreferences sp=context.getSharedPreferences(CommonDefine.LOCATION_DATABASES_VERSION,Context.MODE_PRIVATE);
-        int version=sp.getInt(CommonDefine.LOCATION_DATABASES_VERSION,0);
-        File dbPath=new File(filePath);
-        if(LOCATIONDATABASESVERSION!=version||!dbPath.exists()){
-            InputStream input=null;
+    public void loadInitLocationDatabases(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(CommonDefine.LOCATION_DATABASES_VERSION, Context.MODE_PRIVATE);
+        int version = sp.getInt(CommonDefine.LOCATION_DATABASES_VERSION, 0);
+        File dbPath = new File(filePath);
+        if (LOCATIONDATABASESVERSION != version || !dbPath.exists()) {
+            InputStream input = null;
             try {
-                input= context.getAssets().open(DATABASE_NAME);
-                FileOutputStream fos=new FileOutputStream(dbPath);
-                byte[] buffer=new byte[1024];
+                input = context.getAssets().open(DATABASE_NAME);
+                FileOutputStream fos = new FileOutputStream(dbPath);
+                byte[] buffer = new byte[1024];
                 int count = 0;
-                while((count = input.read(buffer))>0){
-                    fos.write(buffer,0,count);
+                while ((count = input.read(buffer)) > 0) {
+                    fos.write(buffer, 0, count);
                 }
 
                 //最后关闭就可以了
                 fos.flush();
                 fos.close();
-                SharedPreferences.Editor ed=sp.edit();
-                ed.putInt(CommonDefine.LOCATION_DATABASES_VERSION,LOCATIONDATABASESVERSION);
+                SharedPreferences.Editor ed = sp.edit();
+                ed.putInt(CommonDefine.LOCATION_DATABASES_VERSION, LOCATIONDATABASESVERSION);
                 ed.commit();
             } catch (IOException e) {
                 e.printStackTrace();
 
-            }finally {
-                if (input!=null){
+            } finally {
+                if (input != null) {
                     try {
                         input.close();
                     } catch (IOException e) {
@@ -88,69 +88,65 @@ public class LocationDatabaseHelper extends OrmLiteSqliteOpenHelper {
     /**
      * 表名
      */
-    private String province="province";
-    private String city="city";
-    private String area="county";
-
-
-
-
+    private String province = "province";
+    private String city = "city";
+    private String area = "county";
 
 
     public List<LocationInfo> getAreaListFromDB(String key) {
 
 
-        return getList(area,key);
+        return getList(area, key);
     }
 
     public List<LocationInfo> getCityListFromDB(String key) {
 
-        return getList(city,key);
+        return getList(city, key);
     }
 
 
     public List<LocationInfo> getProvinceListFromDB() {
 
-        return getList(province,null);
+        return getList(province, null);
     }
 
-    private  List<LocationInfo> getList(String table,String key){
-        SQLiteDatabase databases=SQLiteDatabase.openOrCreateDatabase(filePath,null);
-        List<LocationInfo> list=new ArrayList<LocationInfo>();
-        if(databases!=null){
-            String sql="select * from "+table+" where key=?";
-            String params[]=new String[]{key};
-            if(key==null){
-                sql="select * from "+table;
-                params=null;
+    private List<LocationInfo> getList(String table, String key) {
+        SQLiteDatabase databases = SQLiteDatabase.openOrCreateDatabase(filePath, null);
+        List<LocationInfo> list = new ArrayList<LocationInfo>();
+        if (databases != null) {
+            String sql = "select * from " + table + " where key=?";
+            String params[] = new String[]{key};
+            if (key == null) {
+                sql = "select * from " + table;
+                params = null;
             }
 
-            Cursor cursor=null;
+            Cursor cursor = null;
 
             try {
-                cursor = databases.rawQuery(sql,params);
+                cursor = databases.rawQuery(sql, params);
                 cursor.moveToFirst();
-                while (!cursor.isAfterLast()){
-                    LocationInfo location=     obtainLocationInfo(cursor);
+                while (!cursor.isAfterLast()) {
+                    LocationInfo location = obtainLocationInfo(cursor);
                     list.add(location);
                     cursor.moveToNext();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
                 e.printStackTrace();
-            }finally {
-                if(cursor!=null){
+            } finally {
+                if (cursor != null) {
                     try {
                         cursor.close();
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-                if(databases!=null){
-                    try{
+                if (databases != null) {
+                    try {
                         databases.close();
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -159,16 +155,16 @@ public class LocationDatabaseHelper extends OrmLiteSqliteOpenHelper {
         return list;
     }
 
-    private LocationInfo obtainLocationInfo( Cursor cursor){
-        LocationInfo locationInfo=new LocationInfo();
-        String name=  cursor.getString(cursor.getColumnIndex("mName"));
+    private LocationInfo obtainLocationInfo(Cursor cursor) {
+        LocationInfo locationInfo = new LocationInfo();
+        String name = cursor.getString(cursor.getColumnIndex("mName"));
 
-        String mRF=  cursor.getString(cursor.getColumnIndex("mRF"));
-        String shortname=  cursor.getString(cursor.getColumnIndex("shortname"));
-        float mPx=  cursor.getFloat(cursor.getColumnIndex("mPx"));
-        float mPy=  cursor.getFloat(cursor.getColumnIndex("mPy"));
-        float mLongitude=  cursor.getFloat(cursor.getColumnIndex("mLongitude"));
-        float mLatidude=  cursor.getFloat(cursor.getColumnIndex("mLatidude"));
+        String mRF = cursor.getString(cursor.getColumnIndex("mRF"));
+        String shortname = cursor.getString(cursor.getColumnIndex("shortname"));
+        float mPx = cursor.getFloat(cursor.getColumnIndex("mPx"));
+        float mPy = cursor.getFloat(cursor.getColumnIndex("mPy"));
+        float mLongitude = cursor.getFloat(cursor.getColumnIndex("mLongitude"));
+        float mLatidude = cursor.getFloat(cursor.getColumnIndex("mLatidude"));
 
         locationInfo.setmName(name);
         locationInfo.setmRF(mRF);
@@ -176,6 +172,6 @@ public class LocationDatabaseHelper extends OrmLiteSqliteOpenHelper {
         locationInfo.setPy(mPy);
         locationInfo.setmLatidude(mLatidude);
         locationInfo.setmLongitude(mLongitude);
-        return  locationInfo;
+        return locationInfo;
     }
 }
