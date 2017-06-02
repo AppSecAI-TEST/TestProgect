@@ -3,24 +3,214 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="wrap_content">
 
 
 
-    <android.support.design.widget.TabLayout
-        android:layout_marginLeft="10dp"
-        android:id="@+id/tabs_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="@color/white"
-        style="@style/MyCustomTabLayout"
-        />
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vp_content"
+    <View
+        android:background="@color/gray_line_3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white" />
+        android:layout_height="1px"/>
+
+
+
+    <LinearLayout
+        android:id="@+id/ll_arealayout"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:clickable="true"
+        android:focusable="true"
+        android:enabled="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="match_parent"
+            android:background="@color/custom_gray"
+            android:layout_height="10dp"/>
+
+        <RelativeLayout
+            android:id="@+id/rl_selector_title"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@color/custom_gray"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/tv_selector_top"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:textSize="16dp"
+                android:textColor="@color/black_text"
+                android:paddingBottom="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <ImageView
+                android:id="@+id/ibtn_selector_cancel"
+                android:layout_width="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingBottom="10dp"
+                android:paddingRight="10dp"
+                android:layout_marginRight="12dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:background="@color/custom_gray"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="13dp"
+                android:background="@drawable/only_line_border_bottom"
+                android:layout_height="match_parent"/>
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs_title"
+                android:layout_width="wrap_content"
+                android:background="@android:color/transparent"
+                android:layout_height="35dp"
+                app:tabGravity="fill"
+                app:tabSelectedTextColor="@color/white"
+                android:clipChildren="true"
+                style="@style/MyCustomTabLayout"
+                />
+            <TextView
+                android:background="@drawable/only_line_border_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.lzl.custom_view.area_selector.WrapContentHeightViewPager
+                android:id="@+id/vp_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:background="@android:color/white"
+                android:minHeight="200dp"/>
+
+            <LinearLayout
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View
+                    android:background="@color/gray_line_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"/>
+                <LinearLayout
+                    android:id="@+id/ll_mylocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/white"
+                    android:descendantFocusability="blocksDescendants"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp">
+
+                    <TextView
+                        android:id="@+id/tv_mylocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/distance_mark"
+                        android:drawablePadding="7dp"
+                        android:singleLine="true"
+                        android:text="当前位置:"
+                        android:textColor="@color/black_text"
+                        android:textSize="15dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_location_info"
+                        android:layout_width="0dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/nearby_distance_text_color"
+                        android:textSize="15dp"/>
+
+
+                    <ImageView
+                        android:id="@+id/iv_zhuanquan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
+
+                    <TextView
+                        android:layout_marginLeft="5dp"
+                        android:id="@+id/tv_location_fresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+
+                        android:drawablePadding="7dp"
+                        android:gravity="center"
+                        android:text="刷新"
+                        android:textColor="@color/dialog_btn_color"
+                        android:textSize="15dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:id="@+id/ll_location_tip"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="gone"
+                android:clickable="true"
+                android:focusable="true"
+                android:enabled="true"
+                android:layout_marginBottom="30dp"
+                android:orientation="vertical">
+
+
+                <FrameLayout
+                    android:visibility="visible"
+                    android:gravity="center"
+                    android:layout_width="150dp"
+                    android:layout_height="50dp">
+
+                    <ProgressBar
+                        android:id="@+id/pb_area_location"
+                        android:indeterminateTint="@color/white"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"/>
+                    <TextView
+                        android:layout_gravity="center"
+                        android:id="@+id/tv_area_location"
+                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content"/>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+
+    <ViewStub
+        android:id="@+id/vs_area_hostory"
+        android:visibility="gone"
+        android:layout="@layout/sub_area_hostory_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>

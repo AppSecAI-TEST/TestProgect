@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.tianniu.up.testprogect"
-        minSdkVersion 15
+        minSdkVersion 22
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -13,13 +13,32 @@ android {
     }
     buildTypes {
         release {
+            buildConfigField "boolean", "IS_DEBUG", "true"
+            buildConfigField "boolean", "ISSHOWLOG", "false"
+            buildConfigField "boolean", "CATCHEXCEPTION", "true"
+            // shrinkResources true //移除无用res文件
+//            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+//            signingConfig signingConfigs.release
+            buildConfigField "boolean", "IS_DEBUG", "true"
+            buildConfigField "boolean", "ISSHOWLOG", "true"
+            buildConfigField "boolean", "CATCHEXCEPTION", "false"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     dataBinding {
         enabled = true
+    }
+    productFlavors {
+    }
+}
+repositories {
+    flatDir {
+        dirs 'libs'
     }
 }
 
@@ -34,4 +53,12 @@ dependencies {
     compile project(':intorlibrary')
     compile 'com.j256.ormlite:ormlite-android:5.0'
     compile 'com.j256.ormlite:ormlite-core:5.0'
+    compile files('libs/gson-2.1.jar')
+    compile files('libs/umeng-analytics-v5.2.4.jar')
+    compile files('libs/AMap_Android_3DMapSDK_V3.1.1.jar')
+    compile files('libs/AMap_Location_V2.5.0_20160526.jar')
+    compile files('libs/AMap_Navi_v1.8.0_20160421.jar')
+    compile files('libs/AMap_Services_V2.7.0_20151125.jar')
+    compile name: 'umengsharelab', ext: 'aar'
+    compile 'com.android.support:multidex:1.0.1'
 }

@@ -2,8 +2,6 @@ package com.tianniu.custom.view;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -20,10 +18,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tianniu.custom.api.OnLocationSelectorListener;
-import com.tianniu.custom.model.SelectedLocation;
 import com.tianniu.custom.view.base.BaseActivity;
-import com.tianniu.custom.view.custom_view.LocationSelectorPop;
+import com.tianniu.custom.view.custom_view.locatonSelectPop.CustomSelector;
+import com.tianniu.custom.view.custom_view.locatonSelectPop.SearchGoodSelector;
 import com.tianniu.up.testprogect.R;
 
 public class MainActivity extends BaseActivity {
@@ -145,24 +142,29 @@ public class MainActivity extends BaseActivity {
         @Override
         public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             TextView tvStartPostion = (TextView) rootView.findViewById(R.id.tv_start_postion);
             tvStartPostion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     //测试地址选择器
                     Toast.makeText(v.getContext(),"test click",Toast.LENGTH_SHORT).show();
-                    new LocationSelectorPop(v.getContext(), v, new OnLocationSelectorListener() {
-                        @Override
-                        public void onSelectCancelListener(SelectedLocation selectedLocation) {
+//                    new LocationSelectorPop(v.getContext(), v, new OnLocationSelectorListener() {
+//                        @Override
+//                        public void onSelectCancelListener(SelectedLocation selectedLocation) {
+//
+//                        }
+//                    }).showLocationPop();
 
-                        }
-                    }).showLocationPop();
+                    SelectorInfo selectedInfo = new SelectorInfo();
+                    selectedInfo.setContext(v.getContext());
+                    selectedInfo.setPositionView(v);
 
+                    CustomSelector customSelector = new CustomSelector(selectedInfo);
+                    SearchGoodSelector searchGoodSelector = new SearchGoodSelector(selectedInfo,customSelector);
+                    searchGoodSelector.openSelector();
 
                 }
             });
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }

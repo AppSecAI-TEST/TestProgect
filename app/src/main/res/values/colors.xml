@@ -25,10 +25,18 @@
     <color name="color_dark_custom_fragment_2">#303F9F</color>
     <color name="color_dark_canteen">#ebeef0</color>
 
+    <color name="black_text">#333333</color>
+    <color name="green_text2">#007df0</color>
 
 
+    <color name="dialog_btn_color">#007df0</color>
     <color name="Lavender_gray">#708090</color>
     <color name="deepskyblue">#00008B</color>
     <color name="white">#FFFFFF</color>
     <color name="gray_line_3">#e7e7e7</color>
+    <color name="custom_gray">#f7f7f7</color>
+    <color name="forecast_bg_endcolor">#3f416173</color>
+    <color name="nearby_distance_text_color">#ff6600</color>
+    <color name="deepin_gray">#000000</color>
+    <color name="light_orange">#ff9900</color>
 </resources>

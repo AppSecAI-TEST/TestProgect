@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.widget.RelativeLayout;
 
-import com.tianniu.custom.utils.ScreenInfo;
+import com.tianniu.custom.utils.ScreenUtil;
 
 /**
  * @author junjun
@@ -23,9 +23,9 @@ public class InputMethodRelativeLayout extends RelativeLayout {
 
     public InputMethodRelativeLayout(Context paramContext, AttributeSet paramAttributeSet) {
         super(paramContext, paramAttributeSet);
-        ScreenInfo screenInfo = new ScreenInfo((Activity) paramContext);
-        this.screenWidth = screenInfo.getWidth();
-        this.screenHeight = screenInfo.getHeight();
+        ScreenUtil screenUtil = new ScreenUtil((Activity) paramContext);
+        this.screenWidth = screenUtil.getWidth();
+        this.screenHeight = screenUtil.getHeight();
     }
 
     public InputMethodRelativeLayout(Context paramContext, AttributeSet paramAttributeSet, int paramInt) {

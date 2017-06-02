@@ -4,12 +4,14 @@ package com.tianniu.custom.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.WindowManager;
 
 /**
  * 得到屏幕宽高密度等
  * @author 
  */
-public class ScreenInfo {
+public class ScreenUtil {
 	
 	 private Activity activity;
 	 /** 屏幕宽度（像素）*/
@@ -61,7 +63,7 @@ public class ScreenInfo {
 		this.densityDpi = densityDpi;
 	}
 
-	public ScreenInfo(Activity activity){
+	public ScreenUtil(Activity activity){
 		 this.activity = activity;
 		 ini();
 	 }
@@ -83,4 +85,18 @@ public class ScreenInfo {
 		float density = context.getResources().getDisplayMetrics().density;
 		return (int)(density * dipValue + 0.5f);
 	}
+
+	/**
+	 * 获取屏幕的宽度
+	 *
+	 * @param context
+	 * @return
+	 */
+	public static int getScreenWidth(Context context) {
+		WindowManager manager = (WindowManager) context
+				.getSystemService(Context.WINDOW_SERVICE);
+		Display display = manager.getDefaultDisplay();
+		return display.getWidth();
+	}
+
 }

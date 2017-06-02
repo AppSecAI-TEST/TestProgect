@@ -1,14 +1,9 @@
-package com.tianniu.custom.view.custom_view;
+package com.tianniu.custom.view.custom_view.locatonSelectPop;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
-import android.location.Location;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
@@ -27,15 +22,15 @@ import android.widget.TextView;
 
 import com.tianniu.custom.LocationManager;
 import com.tianniu.custom.adapter.OnItemClickListener;
-import com.tianniu.custom.adapter.SelectorPopAdapter;
+import com.tianniu.custom.adapter.SelectorGridAdapter;
 import com.tianniu.custom.api.OnLocationSelectorListener;
 import com.tianniu.custom.model.LocationInfo;
 import com.tianniu.custom.model.SelectedLocation;
 import com.tianniu.custom.utils.CommonOperate;
+import com.tianniu.custom.view.custom_view.GridSpacingItemDecoration;
 import com.tianniu.up.testprogect.R;
 
 import java.util.ArrayList;
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
 
 
@@ -44,7 +39,7 @@ public class LocationSelectorPop {
     private LocationManager locationManager;
     private TabLayout tabs_title;
     private ViewPager vpContent;
-    private MyPageadapter myPageadapter;
+    private AreaViewPageadapter myPageadapter;
     private TabLayout.OnTabSelectedListener onTabSelectedListener;
 
     private final int PROVINCE = 0 ,CITY = 1,COUNTY =2;
@@ -165,7 +160,7 @@ public class LocationSelectorPop {
                 if (currentItem == CITY){
                     generatePage(areas, tempName);
                 }else {
-                    SelectorPopAdapter adapter = (SelectorPopAdapter) recyclerViews.get(pageCount-1).getAdapter();
+                    SelectorGridAdapter adapter = (SelectorGridAdapter) recyclerViews.get(pageCount-1).getAdapter();
                     adapter.updateData(areas,tempName);
                 }
 
@@ -173,12 +168,12 @@ public class LocationSelectorPop {
             case 3://包含三列省市县
                 if (currentItem ==PROVINCE){ //在第一列的时候删除第三列数据
                     tabsStr = new String[]{tempName,"请选择市","请选择县"};
-                    MyPageadapter adapter = (MyPageadapter)viewPager.getAdapter();
+                    AreaViewPageadapter adapter = (AreaViewPageadapter)viewPager.getAdapter();
                     locationViews.remove(locationViews.size()-1);
                     adapter.updateInfo(locationViews);
                     recyclerViews.remove(recyclerViews.size()-1);
                 }
-                SelectorPopAdapter recyclerAdapter = (SelectorPopAdapter) recyclerViews.get(currentItem+1).getAdapter();
+                SelectorGridAdapter recyclerAdapter = (SelectorGridAdapter) recyclerViews.get(currentItem+1).getAdapter();
                 recyclerAdapter.updateData(areas,tempName);
                 break;
         }
@@ -202,17 +197,22 @@ public class LocationSelectorPop {
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(mContext,5,10));
 
         LayoutInflater mInflater = LayoutInflater.from(mContext);
-        ViewGroup itemView = (ViewGroup)mInflater.inflate(R.layout.ll_location_selector_item, null);
-        SelectorPopAdapter selectorPopAdapter = new SelectorPopAdapter(mContext, locations, selectedToponymy, new OnItemClickListener() {
+        ViewGroup itemView = (ViewGroup)mInflater.inflate(R.layout.ll_page_selector_item, null);
+        SelectorGridAdapter selectorGridAdapter = new SelectorGridAdapter(mContext, locations, selectedToponymy, new OnItemClickListener() {
             @Override
-            public void onItemClickListener(View v, LocationInfo locationInfo) {
+            public void onAreaItemClickListener(View v, LocationInfo locationInfo) {
                 v.setBackgroundResource(R.color.color_dark_material_metaphor);
                 updatePageAdapter(vpContent,locationInfo);
+            }
+
+            @Override
+            public void onRangeItemClickListener(String range) {
+
             }
         });
 
         recyclerViews.add(recyclerView);
-        recyclerView.setAdapter(selectorPopAdapter);
+        recyclerView.setAdapter(selectorGridAdapter);
         itemView.addView(recyclerView);
         locationViews.add(itemView);
         PagerAdapter adapter = vpContent.getAdapter();
@@ -240,7 +240,7 @@ public class LocationSelectorPop {
             textView.setGravity(Gravity.CENTER);
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(160, ViewGroup.LayoutParams.MATCH_PARENT);
             textView.setLayoutParams(layoutParams);
-            textView.setBackgroundResource(R.drawable.select_range_buttom);
+            textView.setBackgroundResource(R.drawable.tablayout_buttom);
             tabAt.setCustomView(textView);
             tabAt.select();
             textView.setText(tabsStr[i]);
@@ -260,7 +260,7 @@ public class LocationSelectorPop {
         provinces = locationManager.getProvinces();
 
         generatePage(provinces, "");
-        myPageadapter = new MyPageadapter(locationViews);
+        myPageadapter = new AreaViewPageadapter(locationViews);
         vpContent.setAdapter(myPageadapter);
         updateTabs();
 
@@ -269,42 +269,6 @@ public class LocationSelectorPop {
     }
 
 
-    private class MyPageadapter extends PagerAdapter{
-
-        private List<View> views;
-
-        public MyPageadapter(List<View> views) {
-            this.views = views;
-        }
-
-        @Override
-        public int getCount() {
-            return views.size();
-        }
-
-
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View view = (views.get(position));
-            container.addView(view,0);
-            return views.get(position);
-        }
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView(locationViews.get(position));
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return (view == object);
-        }
-
-        public void updateInfo(List<View> locationViews) {
-            this.views = locationViews;
-            notifyDataSetChanged();
-        }
-    }
 
 
     private void initDataAndShow(boolean isIndex) {
@@ -362,6 +326,7 @@ public class LocationSelectorPop {
         // mLocationPop.setBackgroundDrawable(((Activity)mContext).getResources().getDrawable(R.drawable.choosearea_bg_mid));
 
         mLocationPop.setBackgroundDrawable(new BitmapDrawable(null,""));
+        mLocationPop.setOutsideTouchable(true);
         mLocationPop.setOutsideTouchable(true);
         mLocationPop.update();
         mLocationPop.setTouchable(true);
