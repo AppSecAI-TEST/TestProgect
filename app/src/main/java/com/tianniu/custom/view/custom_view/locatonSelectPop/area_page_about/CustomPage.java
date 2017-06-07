@@ -22,6 +22,7 @@ import com.tianniu.custom.model.SearchDistanceParam;
 import com.tianniu.custom.model.SelectedLocation;
 import com.tianniu.custom.view.custom_view.GridSpacingItemDecoration;
 import com.tianniu.custom.view.custom_view.locatonSelectPop.OnAreaSelectorListener;
+import com.tianniu.custom.view.custom_view.locatonSelectPop.SearchGoodSelector;
 import com.tianniu.up.testprogect.R;
 
 import java.util.ArrayList;
@@ -83,6 +84,10 @@ public class CustomPage implements AreaPage{
 
 
     public CustomPage() {
+
+    }
+
+    public CustomPage(Context context, String selectedToponymy, SearchGoodSelector searchGoodSelector) {
 
     }
 
@@ -367,7 +372,20 @@ public class CustomPage implements AreaPage{
         return areaViews;
     }
 
+    @Override
+    public List<View> generationRootView(List<LocationInfo> areas) {
+        return null;
+    }
 
+    @Override
+    public void openRangeSelector(int showPosition) {
+
+    }
+
+    @Override
+    public void notifyUpdate(int position, List<LocationInfo> locationInfos) {
+
+    }
 
 
     /**
@@ -546,10 +564,8 @@ public class CustomPage implements AreaPage{
     public void openRangeSelector(View areaView) {
         if (rangeView == null) {
             rangeView = mInflater.inflate(R.layout.ll_range_selector, null);
-            tvAreaRangeTitle = (TextView) rangeView.findViewById(R.id.tv_area_range_title);
         }
         if(rangeAdapter == null && recyclerView ==null){
-            recyclerView = (RecyclerView) rangeView.findViewById(R.id.rv_range_selector);
             recyclerView.setLayoutManager(new GridLayoutManager(this.context, 4));
             recyclerView.addItemDecoration(new GridSpacingItemDecoration(this.context, 0, 0));
 

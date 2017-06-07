@@ -40,6 +40,8 @@ import com.tianniu.custom.view.base.SimpleIntroActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Retrofit;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
@@ -155,6 +157,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 @TargetApi(Build.VERSION_CODES.M)
                 public void onClick(View v) {
                     requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+
                 }
             });
         } else {

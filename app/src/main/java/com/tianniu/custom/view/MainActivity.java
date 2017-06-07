@@ -19,8 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tianniu.custom.view.base.BaseActivity;
-import com.tianniu.custom.view.custom_view.locatonSelectPop.CustomSelector;
 import com.tianniu.custom.view.custom_view.locatonSelectPop.SearchGoodSelector;
+import com.tianniu.custom.view.custom_view.locatonSelectPop.area_page_about.SelectorInfo;
 import com.tianniu.up.testprogect.R;
 
 public class MainActivity extends BaseActivity {
@@ -159,8 +159,7 @@ public class MainActivity extends BaseActivity {
                     selectedInfo.setContext(v.getContext());
                     selectedInfo.setPositionView(v);
 
-                    CustomSelector customSelector = new CustomSelector(selectedInfo);
-                    SearchGoodSelector searchGoodSelector = new SearchGoodSelector(selectedInfo,customSelector);
+                    SearchGoodSelector searchGoodSelector = new SearchGoodSelector(selectedInfo,null);
                     searchGoodSelector.openSelector();
 
                 }

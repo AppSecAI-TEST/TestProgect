@@ -8,6 +8,7 @@ import com.tianniu.custom.adapter.OnItemClickListener;
 import com.tianniu.custom.model.LocationInfo;
 import com.tianniu.custom.view.custom_view.locatonSelectPop.area_page_about.CustomPage;
 import com.tianniu.custom.view.custom_view.locatonSelectPop.area_page_about.RoutineAreaPage;
+import com.tianniu.custom.view.custom_view.locatonSelectPop.area_page_about.SelectorInfo;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class SearchGoodSelector extends DressingSelector implements OnItemClickL
     private boolean isOpenRange;
 
 
-    public SearchGoodSelector(SelectorInfo selectorInfo,AreaSelector areaSelector) {
+    public SearchGoodSelector(SelectorInfo selectorInfo, AreaSelector areaSelector) {
         super(areaSelector);
         this.selectorInfo = selectorInfo;
         customSelector = areaSelector;

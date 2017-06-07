@@ -61,4 +61,7 @@ dependencies {
     compile files('libs/AMap_Services_V2.7.0_20151125.jar')
     compile name: 'umengsharelab', ext: 'aar'
     compile 'com.android.support:multidex:1.0.1'
+
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
 }
