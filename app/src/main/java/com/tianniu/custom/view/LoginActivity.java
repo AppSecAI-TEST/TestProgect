@@ -31,6 +31,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tianniu.custom.HttpManager;
 import com.tianniu.custom.LocationManager;
 import com.tianniu.custom.view.base.BaseActivity;
 import com.tianniu.up.testprogect.R;
@@ -45,7 +46,6 @@ import retrofit2.Retrofit;
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
- * A login screen that offers login via email/password.
  * 登录页
  */
 public class LoginActivity extends BaseActivity implements LoaderCallbacks<Cursor>, InputMethodRelativeLayout.OnSizeChangedListenner {
@@ -53,13 +53,9 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     */
+
     private static final String[] DUMMY_CREDENTIALS = new String[]{"123@163.com:123456", "bar@example.com:world"};
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
+
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -180,11 +176,14 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
 
     /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
+     * 登录
      */
     private void attemptLogin() {
+        if (true){
+            HttpManager instance = HttpManager.getInstance();
+            instance.test();
+            return;
+        }
         if (mAuthTask != null) {
             return;
         }

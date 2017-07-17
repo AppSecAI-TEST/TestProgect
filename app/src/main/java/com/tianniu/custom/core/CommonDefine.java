@@ -1,5 +1,6 @@
 package com.tianniu.custom.core;
 
+import android.app.Application;
 import android.util.SparseIntArray;
 
 import com.tianniu.up.testprogect.BuildConfig;
@@ -18,7 +19,7 @@ public class CommonDefine {
      */
     public static String IDENTITY_LABEL_SERVER_MENU="server_menu";
 
-    public static String CLIENT_VERSION = "3009";
+    public static String CLIENT_VERSION = "3300";
     public static final String VERSION_STRING = "v3.0.0.9";
 
     public static final String UNION_PAY_MODE = "00"; // 01测试 //00正式
@@ -214,7 +215,7 @@ public class CommonDefine {
     public static final String URL_CAR_IDENTITY = URL_BASE + "car/identity/save";
     public static final String URL_USER_IDENTITY = URL_BASE + "user/identity/save";// 旧的接口
     public static final String URL_UPDATE = URL_BASE + "version/check";
-    public static final String URL_LOGIN = URL_BASE + "user/login";
+    public static final String URL_LOGIN = URL_BASE + "user/login/";
     public static final String URL_SIMULATED_LOGIN = URL_BASE + "user/simulatedLogin";
 
     public static final String URL_REGISTER = URL_BASE + "user/save";
@@ -905,7 +906,8 @@ public class CommonDefine {
     /**
      * 在application的oncreate中初始化
      */
-    public static  String CLIENT_ID = android.os.Build.MODEL;
+//    public static  String CLIENT_ID = android.os.Build.MODEL;
+    public static  String CLIENT_ID ;
     public static final String PHONE_TYPE = android.os.Build.MODEL;
     public static final String IMAGE_FILE_NAME = "userIcon";
 

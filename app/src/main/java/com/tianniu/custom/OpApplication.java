@@ -1,5 +1,6 @@
 package com.tianniu.custom;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
@@ -11,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,7 +27,6 @@ import com.tianniu.custom.model.PhoneNumber;
 import com.tianniu.custom.utils.LLog;
 import com.tianniu.custom.view.LoginActivity;
 import com.tianniu.up.testprogect.BuildConfig;
-import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.Config;
 import com.umeng.socialize.UMShareAPI;
 
@@ -50,11 +52,10 @@ public class OpApplication extends Application {
     private static OpApplication mApp;
 
 
-
     /**
      * 记录服务器地址
      */
-    public static String server_url="";
+    public static String server_url = "";
 
     /**
      * 身份认证选择信息
@@ -66,27 +67,24 @@ public class OpApplication extends Application {
     public List<IdentityInfo> cargoOwnerIdentityList;
 
 
+    private void clearIdentityList() {
 
-
-
-
-    private void clearIdentityList(){
-
-        if(driverIdentityList!=null){
+        if (driverIdentityList != null) {
             driverIdentityList.clear();
         }
-        if(cargoOwnerIdentityList!=null){
+        if (cargoOwnerIdentityList != null) {
             cargoOwnerIdentityList.clear();
         }
     }
+
     /**
      * 用来区分发货和接单弹窗是否弹出过的存储ID
      */
-    public static Map<String,Map<String,String>> cargoWindowMsgMaxId=new HashMap<String,Map<String,String>>(0);
+    public static Map<String, Map<String, String>> cargoWindowMsgMaxId = new HashMap<String, Map<String, String>>(0);
     /**
      * 服务器升级信息
      */
-    private static HashMap<String,String> properties;
+    private static HashMap<String, String> properties;
 
     public static HashMap<String, String> getProperties() {
         return properties;
@@ -96,25 +94,28 @@ public class OpApplication extends Application {
         OpApplication.properties = properties;
     }
 
-    public static List<Object> windowShowList=new ArrayList<Object>(0);
+    public static List<Object> windowShowList = new ArrayList<Object>(0);
 
-    public static void addWindowShow(Object o){
-        if(!windowShowList.contains(o)) {
+    public static void addWindowShow(Object o) {
+        if (!windowShowList.contains(o)) {
             windowShowList.add(o);
         }
 
     }
-    public static void removeWindowShow(Object o){
+
+    public static void removeWindowShow(Object o) {
 
         windowShowList.remove(o);
 
     }
-    public static boolean hasWindowShowed(){
-        if(windowShowList.size()>0){
+
+    public static boolean hasWindowShowed() {
+        if (windowShowList.size() > 0) {
             return true;
         }
         return false;
     }
+
     @Override
     protected void attachBaseContext(final Context base) {
         super.attachBaseContext(base);
@@ -122,7 +123,6 @@ public class OpApplication extends Application {
     }
 
     private String currenNaviMode;
-
 
 
     public boolean isRecruitmentResourceGet() {
@@ -152,39 +152,36 @@ public class OpApplication extends Application {
     }
 
 
+    public final Map<String, Integer> cargoMsgCount = new HashMap<String, Integer>(0);
 
 
-    public final  Map<String,Integer> cargoMsgCount=new HashMap<String,Integer>(0);
+    public void cargoMsgCountAdd(String key, int count) {
 
-
-
-    public void cargoMsgCountAdd(String key,int count){
-
-        Integer value=cargoMsgCount.get(key);
-        if(value==null){
-            value=0;
-            cargoMsgCount.put(key,value);
+        Integer value = cargoMsgCount.get(key);
+        if (value == null) {
+            value = 0;
+            cargoMsgCount.put(key, value);
         }
-        value+=count;
+        value += count;
 
-        cargoMsgCount.put(key,value);
+        cargoMsgCount.put(key, value);
     }
 
-    public void cargoMsgCountFresh(String key,int count){
+    public void cargoMsgCountFresh(String key, int count) {
 
 
-
-        cargoMsgCount.put(key,count);
+        cargoMsgCount.put(key, count);
     }
 
-    public int cargoMsgCountGet(String key){
-        Integer value=cargoMsgCount.get(key);
-        if(value==null){
-            value=0;
-            cargoMsgCount.put(key,0);
+    public int cargoMsgCountGet(String key) {
+        Integer value = cargoMsgCount.get(key);
+        if (value == null) {
+            value = 0;
+            cargoMsgCount.put(key, 0);
         }
         return value;
     }
+
     /**
      * 各种消息数
      * Pair<Boolean,Integer>  boolean 表示是否已经加载过了，Integer表示消息的数量
@@ -272,7 +269,7 @@ public class OpApplication extends Application {
         this.ipLocation = ipLocation;
     }
 
-    private JSONObject ipLocation=null;
+    private JSONObject ipLocation = null;
     /**
      * 板车招聘的资源信息获取完成
      * 已经没用了，永远返回true，找个机会完全去掉
@@ -359,19 +356,13 @@ public class OpApplication extends Application {
                     e.printStackTrace();
                 }
 
-                SharedPreferences sp = getSharedPreferences(
-                         CommonDefine.SETTING, Context.MODE_PRIVATE);
-                receiveMsgHint = sp.getBoolean(
-                         CommonDefine.SETTING_RECEIVE_MSG_HINT, true);
-                soundHint = sp
-                         .getBoolean(CommonDefine.SETTING_SOUND_HINT, true);
-                vibrateHint = sp.getBoolean(CommonDefine.SETTING_VIBRATE_HINT,
-                         true);
-                searchCargoSoundHint = sp.getBoolean(
-                         CommonDefine.SETTING_SEARCH_CARGO_SOUND_HINT, true);
+                SharedPreferences sp = getSharedPreferences(CommonDefine.SETTING, Context.MODE_PRIVATE);
+                receiveMsgHint = sp.getBoolean(CommonDefine.SETTING_RECEIVE_MSG_HINT, true);
+                soundHint = sp.getBoolean(CommonDefine.SETTING_SOUND_HINT, true);
+                vibrateHint = sp.getBoolean(CommonDefine.SETTING_VIBRATE_HINT, true);
+                searchCargoSoundHint = sp.getBoolean(CommonDefine.SETTING_SEARCH_CARGO_SOUND_HINT, true);
 
-                versionCheck = sp.getString(CommonDefine.SETTING_VERSION_CHECK,
-                         currentVersionName);
+                versionCheck = sp.getString(CommonDefine.SETTING_VERSION_CHECK, currentVersionName);
                 isLoadSettingInfoOver = true;
                 ;
             }
@@ -397,6 +388,7 @@ public class OpApplication extends Application {
 
     /**
      * 永远返回100 ,这样就不会起作用了
+     *
      * @return
      */
     @Deprecated
@@ -422,14 +414,8 @@ public class OpApplication extends Application {
 
             @Override
             public void uncaughtException(Thread arg0, Throwable arg1) {
-                applicationRunTime = System.currentTimeMillis()
-                         - applicationCreateTime;
-                MobclickAgent.reportError(getApplicationContext(),
-                         arg1.toString() + "  -----applicationRunTime= "
-                                  + applicationRunTime + " ms");
-                MobclickAgent.reportError(getApplicationContext(), arg1);
-                MobclickAgent.flush(OpApplication.this);
-                MobclickAgent.onKillProcess(OpApplication.this);
+                applicationRunTime = System.currentTimeMillis() - applicationCreateTime;
+
                 arg1.printStackTrace();
 
                 Intent ii = new Intent(OpApplication.this, LoginActivity.class);
@@ -449,14 +435,7 @@ public class OpApplication extends Application {
 
             @Override
             public void uncaughtException(Thread arg0, Throwable arg1) {
-                applicationRunTime = System.currentTimeMillis()
-                         - applicationCreateTime;
-                MobclickAgent.reportError(getApplicationContext(),
-                         arg1.toString() + "  -----applicationRunTime= "
-                                  + applicationRunTime + " ms");
-                MobclickAgent.reportError(getApplicationContext(), arg1);
-                MobclickAgent.flush(OpApplication.this);
-                MobclickAgent.onKillProcess(OpApplication.this);
+                applicationRunTime = System.currentTimeMillis() - applicationCreateTime;
                 arg1.printStackTrace();
                 android.os.Process.killProcess(android.os.Process.myPid()); // 结束进程之前可以把你程序的注销或者退出代码放在这段代码之前
             }
@@ -505,8 +484,6 @@ public class OpApplication extends Application {
     }
 
 
-
-
     public int getCarInfoCount() {
         return carInfoCount;
     }
@@ -515,7 +492,7 @@ public class OpApplication extends Application {
         this.carInfoCount = carInfoCount;
     }
 
-    private int carInfoCount=0;
+    private int carInfoCount = 0;
 
     public List<PhoneNumber> getPhoneNumbers() {
         return phoneNumbers;
@@ -523,16 +500,14 @@ public class OpApplication extends Application {
 
     private String getCurrentProcessName(Context context) {
         int pid = android.os.Process.myPid();
-        ActivityManager mActivityManager = (ActivityManager) context
-                 .getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningAppProcessInfo appProcess : mActivityManager .getRunningAppProcesses()) {
+        ActivityManager mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo appProcess : mActivityManager.getRunningAppProcesses()) {
             if (appProcess.pid == pid) {
                 return appProcess.processName;
             }
         }
         return "";
     }
-
 
 
     @Override
@@ -546,7 +521,7 @@ public class OpApplication extends Application {
         // if (!Debug.isDebuggerConnected()) {
         // // ACRA.init(this);
         // }
-        String defaultProcessName = "com.google.lzl";// 默认的进程名，也就是主程序的进程名。
+        String defaultProcessName = "com.tianniu.up.testprogect";// 默认的进程名，也就是主程序的进程名。  //TODO  注意注意注意注意注意注意注意注意注意注意注意注意注意
         String currentProcessName = getCurrentProcessName(this);
         if (!defaultProcessName.equals(currentProcessName)) {// 如果不是当前的主进程，那么直接返回，因为后面的代码对于其他进程来说完全没用
             otherAppCatchException();//拦截其他进程的崩溃
@@ -559,7 +534,6 @@ public class OpApplication extends Application {
             catchException();
         }
         super.onCreate();
-        CommonDefine.CLIENT_ID = getMyUUID();
         mApp = this;
         mContext = getApplicationContext();
         PackageManager manager = getPackageManager();
@@ -578,10 +552,8 @@ public class OpApplication extends Application {
     }
 
     public void clearTicket() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences(
-                 CommonDefine.SETTING, MODE_PRIVATE);
-        sharedPreferences.edit().remove(CommonDefine.USER_ID)
-                 .remove(CommonDefine.TICKET).commit();
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences(CommonDefine.SETTING, MODE_PRIVATE);
+        sharedPreferences.edit().remove(CommonDefine.USER_ID).remove(CommonDefine.TICKET).commit();
         removePersonInfo();
     }
 
@@ -599,7 +571,6 @@ public class OpApplication extends Application {
         }
 
     }
-
 
 
     /**
@@ -629,12 +600,9 @@ public class OpApplication extends Application {
         return null;
     }
 
-    public List<Activity> getMyActivitys(){
+    public List<Activity> getMyActivitys() {
         return activitys;
     }
-
-
-
 
 
     public void addActivity(Activity activity) {
@@ -656,8 +624,7 @@ public class OpApplication extends Application {
 
     public OpApplication() {
 
-        mThreadPool = Executors
-                 .newFixedThreadPool(CommonDefine.NUMBER_FOR_BACKGROUND_THREAD);
+        mThreadPool = Executors.newFixedThreadPool(CommonDefine.NUMBER_FOR_BACKGROUND_THREAD);
         feelThreadPool = Executors.newCachedThreadPool();
     }
 
@@ -673,12 +640,12 @@ public class OpApplication extends Application {
         return mPersonInfo;
     }
 
-    public boolean hasPersonInfoEmpty(){
-        if(mPersonInfo==null){
+    public boolean hasPersonInfoEmpty() {
+        if (mPersonInfo == null) {
             return true;
         }
 
-        if(mPersonInfo.getId()>0){
+        if (mPersonInfo.getId() > 0) {
             return false;
         }
 
@@ -708,8 +675,7 @@ public class OpApplication extends Application {
     public void onAppReStoreInstanceState(Bundle outState) {
 
         if (mPersonInfo == null) {
-            PersonInfo info = (PersonInfo) outState
-                     .getSerializable("mPersonInfo");
+            PersonInfo info = (PersonInfo) outState.getSerializable("mPersonInfo");
 
             if (info != null) {
 
@@ -718,16 +684,14 @@ public class OpApplication extends Application {
         }
 
         if (mCommonResources == null) {
-            CommonResources url = (CommonResources) outState
-                     .getSerializable("mPublicUrl");
+            CommonResources url = (CommonResources) outState.getSerializable("mPublicUrl");
             if (url != null) {
                 mCommonResources = url;
             }
         }
 
         if (phoneNumbers.size() == 0) {
-            ArrayList<PhoneNumber> list = (ArrayList<PhoneNumber>) outState
-                     .getSerializable("phoneNumbers");
+            ArrayList<PhoneNumber> list = (ArrayList<PhoneNumber>) outState.getSerializable("phoneNumbers");
             if (list != null) {
                 phoneNumbers.addAll(list);
             }
@@ -846,8 +810,7 @@ public class OpApplication extends Application {
                 // l
             }
 
-            public void deleteNumber(Context context, String number,
-                                     String persionid) {
+            public void deleteNumber(Context context, String number, String persionid) {
                 isDeletedPhoneNumber = true;
                 if (!TextUtils.isEmpty(tel) && tel.equals(number)) {
 
@@ -861,21 +824,11 @@ public class OpApplication extends Application {
                 }
                 fireListener();// 调用监听
                 if (isDeletedPhoneNumber) {// 如果判断到电话号码改变了，那么修改sharep
-                    final SharedPreferences sp = context.getSharedPreferences(
-                             CommonDefine.SAVESENDTELMAP + persionid,
-                             Context.MODE_PRIVATE);
+                    final SharedPreferences sp = context.getSharedPreferences(CommonDefine.SAVESENDTELMAP + persionid, Context.MODE_PRIVATE);
 
                     new Thread() {
                         public void run() {
-                            sp.edit()
-                                     .putString(CommonDefine.SAVESENDTELMAP_TEL,
-                                              tel)
-                                     .putString(
-                                              CommonDefine.SAVESENDTELMAP_TEL3,
-                                              tel3)
-                                     .putString(
-                                              CommonDefine.SAVESENDTELMAP_TEL4,
-                                              tel4).commit();
+                            sp.edit().putString(CommonDefine.SAVESENDTELMAP_TEL, tel).putString(CommonDefine.SAVESENDTELMAP_TEL3, tel3).putString(CommonDefine.SAVESENDTELMAP_TEL4, tel4).commit();
                         }
 
                         ;
@@ -922,8 +875,7 @@ public class OpApplication extends Application {
             }
 
             public void unregister() {
-                if (listener != null)
-                    this.listener = null;
+                if (listener != null) this.listener = null;
             }
 
             private void fireListener() {
@@ -949,18 +901,6 @@ public class OpApplication extends Application {
 
     }
 
-
-    private String getMyUUID() {
-        final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
-        final String tmDevice, tmSerial, tmPhone, androidId;
-        tmDevice = "" + tm.getDeviceId();
-        tmSerial = "" + tm.getSimSerialNumber();
-        androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-        UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
-        String uniqueId = deviceUuid.toString();
-        Log.d("debug", "uuid=" + uniqueId);
-        return uniqueId;
-    }
 
 
 

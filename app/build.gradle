@@ -1,19 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
     buildToolsVersion "25.0.2"
+    compileSdkVersion 23
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.tianniu.up.testprogect"
-        minSdkVersion 22
-        targetSdkVersion 25
+        minSdkVersion 15
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            buildConfigField "boolean", "IS_DEBUG", "true"
+            buildConfigField "boolean", "IS_DEBUG", "false"
             buildConfigField "boolean", "ISSHOWLOG", "false"
             buildConfigField "boolean", "CATCHEXCEPTION", "true"
             // shrinkResources true //移除无用res文件
@@ -23,7 +24,7 @@ android {
         }
         debug {
 //            signingConfig signingConfigs.release
-            buildConfigField "boolean", "IS_DEBUG", "true"
+            buildConfigField "boolean", "IS_DEBUG", "false"
             buildConfigField "boolean", "ISSHOWLOG", "true"
             buildConfigField "boolean", "CATCHEXCEPTION", "false"
             minifyEnabled false
@@ -35,6 +36,7 @@ android {
     }
     productFlavors {
     }
+
 }
 repositories {
     flatDir {
@@ -47,21 +49,18 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.0'
-    compile 'com.android.support:design:25.3.0'
     testCompile 'junit:junit:4.12'
     compile project(':intorlibrary')
     compile 'com.j256.ormlite:ormlite-android:5.0'
     compile 'com.j256.ormlite:ormlite-core:5.0'
-    compile files('libs/gson-2.1.jar')
-    compile files('libs/umeng-analytics-v5.2.4.jar')
     compile files('libs/AMap_Android_3DMapSDK_V3.1.1.jar')
     compile files('libs/AMap_Location_V2.5.0_20160526.jar')
     compile files('libs/AMap_Navi_v1.8.0_20160421.jar')
     compile files('libs/AMap_Services_V2.7.0_20151125.jar')
-    compile name: 'umengsharelab', ext: 'aar'
+    compile(name: 'umengsharelab', ext: 'aar')
     compile 'com.android.support:multidex:1.0.1'
-
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.android.support:appcompat-v7:24.+'
+    compile 'com.android.support:design:24.+'
 }
