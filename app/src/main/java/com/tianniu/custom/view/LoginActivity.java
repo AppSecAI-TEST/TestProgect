@@ -3,6 +3,7 @@ package com.tianniu.custom.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.design.widget.Snackbar;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -67,7 +68,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private static final String[] DUMMY_CREDENTIALS = new String[]{"123@163.com:123456", "bar@example.com:world"};
 
 
-    // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -89,6 +89,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
+        mEmailView.setText("13641330091");
+        mPasswordView.setText("111111");
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -114,8 +116,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 //                attemptLogin();
                 userApi = httpManager.get(UserApi.class);
                 String callPhone = mEmailView.getText().toString();
-                mEmailView.setText("13641330091");
-                mPasswordView.setText("111111");
+
                 String password = mPasswordView.getText().toString();
                 if (TextUtils.isEmpty(callPhone) || TextUtils.isEmpty(password)){
                     ToastUtil.showShortToast(mActivity,getString(R.string.error_sign_in_1));
@@ -125,7 +126,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                 userApi.login(httpManager.login(callPhone,password)).enqueue(new HttpCallBack<LoginResult>(mActivity) {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-
+                        startActivity(new Intent(LoginActivity.this,MainActivity.class));
                     }
                 });
             }
