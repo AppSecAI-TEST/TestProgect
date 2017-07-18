@@ -3,18 +3,14 @@ package com.tianniu.custom.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -31,17 +27,31 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
+import com.tianniu.custom.HttpCallBack;
 import com.tianniu.custom.HttpManager;
-import com.tianniu.custom.LocationManager;
+import com.tianniu.custom.HttpResponse;
+import com.tianniu.custom.LoginResult;
+import com.tianniu.custom.UserApi;
+import com.tianniu.custom.core.JsonTag;
+import com.tianniu.custom.model.PersonInfo;
+import com.tianniu.custom.utils.JsonUtils;
+import com.tianniu.custom.utils.ToastUtil;
 import com.tianniu.custom.view.base.BaseActivity;
 import com.tianniu.up.testprogect.R;
 import com.tianniu.custom.view.custom_view.InputMethodRelativeLayout;
-import com.tianniu.custom.view.base.SimpleIntroActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Retrofit;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -56,7 +66,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
     private static final String[] DUMMY_CREDENTIALS = new String[]{"123@163.com:123456", "bar@example.com:world"};
 
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -65,6 +74,8 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private InputMethodRelativeLayout mLoginFormView;
     private LinearLayout login_logo_layout_v;
     private LinearLayout login_logo_layout_h;
+    private HttpManager httpManager;
+    private UserApi userApi;
 
     @Override
     public int getLayoutId() {
@@ -73,29 +84,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
     @Override
     public void initView() {
-
-    }
-
-    @Override
-    public void initListener() {
-
-    }
-
-    @Override
-    public void initData() {
-
-    }
-
-    @Override
-    public void processClick(View view) {
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
@@ -111,16 +100,38 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             }
         });
 
+        findViewById(R.id.email_sign_in_button2).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HttpManager.cancel(userApi);
+            }
+        });
+
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+//                attemptLogin();
+                userApi = httpManager.get(UserApi.class);
+                String callPhone = mEmailView.getText().toString();
+                mEmailView.setText("13641330091");
+                mPasswordView.setText("111111");
+                String password = mPasswordView.getText().toString();
+                if (TextUtils.isEmpty(callPhone) || TextUtils.isEmpty(password)){
+                    ToastUtil.showShortToast(mActivity,getString(R.string.error_sign_in_1));
+                    return;
+                }
+
+                userApi.login(httpManager.login(callPhone,password)).enqueue(new HttpCallBack<LoginResult>(mActivity) {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+
+                    }
+                });
             }
         });
 
         mProgressView = findViewById(R.id.login_progress);
-
         //取得InputMethodRelativeLayout组件
         mLoginFormView = (InputMethodRelativeLayout) this.findViewById(R.id.loginpage);
         //设置监听事件
@@ -129,6 +140,30 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         login_logo_layout_v = (LinearLayout) this.findViewById(R.id.login_logo_layout_v);
         //取得小LOGO布局
         login_logo_layout_h = (LinearLayout) this.findViewById(R.id.login_logo_layout_h);
+    }
+
+    @Override
+    public void initListener() {
+
+    }
+
+    @Override
+    public void initData() {
+        httpManager = HttpManager.getInstance();
+    }
+
+    @Override
+    public void processClick(View view) {
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        initView();
+        initData();
+
+
 
     }
 
@@ -162,82 +197,40 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
         return false;
     }
 
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
-        }
-    }
+
 
 
     /**
      * 登录
      */
     private void attemptLogin() {
-        if (true){
-            HttpManager instance = HttpManager.getInstance();
-            instance.test();
-            return;
-        }
-        if (mAuthTask != null) {
-            return;
-        }
 
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
-
-        // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
         }
 
-        // Check for a valid email address.
-//        if (TextUtils.isEmpty(email)) {
-//            mEmailView.setError(getString(R.string.error_field_required));
-//            focusView = mEmailView;
-//            cancel = true;
-//        } else if (!isEmailValid(email)) {
-//            mEmailView.setError(getString(R.string.error_invalid_email));
-//            focusView = mEmailView;
-//            cancel = true;
-//        }
-
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            httpManager = HttpManager.getInstance();
+            httpManager.test();
         }
     }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 6;
     }
 
     /**
@@ -308,15 +301,14 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
         mEmailView.setAdapter(adapter);
     }
 
     @Override
     public void onSizeChange(boolean flag, int w, int h) {
         if (flag) {//键盘弹出时
-
-            mLoginFormView.setPadding(0, -10, 0, 0);
+            final int i = -10;
+            mLoginFormView.setPadding(0, (int)getResources().getDimension(R.dimen.alphabet_size), 0, 0);
             login_logo_layout_v.setVisibility(View.GONE);
             login_logo_layout_h.setVisibility(View.VISIBLE);
         } else { //键盘隐藏时
@@ -333,59 +325,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
 
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            LocationManager.getInstance(mApp).initLoationInfoFordb();
-
-
-//            for (String credential : DUMMY_CREDENTIALS) {
-//                String[] pieces = credential.split(":");
-//                if (pieces[0].equals(mEmail)) {
-//                    // Account exists, return true if the password matches.
-//                    return pieces[1].equals(mPassword);
-//                }
-//            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) { //登录
-            mAuthTask = null;
-            showProgress(false);
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class); //SimpleIntroActivity
-            LoginActivity.this.startActivity(intent);
-//            if (success) {
-//
-//            } else {
-//                mPasswordView.setError(getString(R.string.error_incorrect_password));
-//                mPasswordView.requestFocus();
-//            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
     }
 }
 

@@ -8,24 +8,17 @@ import com.tianniu.custom.core.JsonTag;
 import com.tianniu.custom.utils.CommonUtil;
 import com.tianniu.custom.utils.SignUtil;
 
-import org.json.JSONObject;
-
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
-import okhttp3.ResponseBody;
+import me.andydev.retrofit.lifecycle.RetrofitLifecycle;
+import me.andydev.retrofit.lifecycle.common.RetrofitInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.FieldMap;
-import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.GET;
-import retrofit2.http.HTTP;
-import retrofit2.http.POST;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
 
 /**
  * Created by Administrator on 2017/6/7 0007.
@@ -33,16 +26,68 @@ import retrofit2.http.Path;
 
 public class HttpManager {
 
-    private static HttpManager httpManager;
-    private Retrofit retrofit;
+    private static HttpManager HttpManager;
 
     private HttpManager() {
     }
     public static HttpManager getInstance(){
-        if (httpManager == null){
-            return new HttpManager();
+        if (HttpManager == null){
+            HttpManager =  new HttpManager();
         }
-        return httpManager;
+        return HttpManager;
+    }
+
+
+    private static final Map<Class, Object> sInterfaceImplementCache = new ConcurrentHashMap<>();
+
+    public <T> T get(Class<T> apiInterface) {
+        T apiImplement;
+        Object cacheApiImplement = sInterfaceImplementCache.get(apiInterface);
+        if (cacheApiImplement != null) {
+            apiImplement = apiInterface.cast(cacheApiImplement);
+        } else {
+            apiImplement = RetrofitService.getRetrofit().create(apiInterface);
+            sInterfaceImplementCache.put(apiInterface, apiImplement);
+        }
+
+        return RetrofitLifecycle.getProxyInterface(apiInterface, apiImplement);
+
+    }
+
+    public static void cancel(Object retrofitAPI, Call... excludes) {
+        RetrofitLifecycle.cancelAll(retrofitAPI, excludes);
+    }
+
+
+    /**
+     * 通用参数
+     * @return
+     */
+    protected TreeMap<String, String> initCustomParamsMap() {
+        TreeMap<String, String> tree = new TreeMap<String, String>();
+        tree.put("Accept", "application/json");
+        tree.put("Content-Type", "application/json; charset=UTF-8");
+        tree.put(JsonTag.CLIENT_SIGN, CommonDefine.CLENT_SIGN);
+        tree.put(JsonTag.OS_VERSION, CommonDefine.OS_VERSION);
+        tree.put(JsonTag.CLIENT_ID, CommonDefine.CLIENT_ID);
+        tree.put(JsonTag.CLIENT_VERSION, CommonDefine.CLIENT_VERSION);
+        tree.put(JsonTag.PHONE_TYPE,CommonDefine.PHONE_TYPE);
+        return tree;
+    }
+
+
+
+    /**
+     * 登录 v
+     */
+    public TreeMap<String, String> login(String cellPhone, String password) {
+        TreeMap<String, String> treeMap = initCustomParamsMap();
+        treeMap.put(JsonTag.CELLPHONE, cellPhone);
+        treeMap.put(JsonTag.CHANNEL_CODE,"991"); //TODO 测试数据
+        treeMap.put(JsonTag.CID, "94d4de5bce31a9ce4554df971755d85e"); //测试数据
+        treeMap.put(JsonTag.PASSWORD, CommonUtil.MD5(CommonUtil.MD5(password) + cellPhone));
+        treeMap.put(JsonTag.SIGN, initSign(treeMap));
+        return treeMap;
     }
 
     /**
@@ -82,6 +127,9 @@ public class HttpManager {
 
         return tree;
     }
+
+
+
     protected String initSign(TreeMap<String, String> map) {
         return SignUtil.sign(map, CommonDefine.PRIVATEKEY);
     }
@@ -116,12 +164,34 @@ public class HttpManager {
         return tree;
     }
 
+
+
+    public Map<String,String> getTree(){
+
+        TreeMap<String, String> tree = new TreeMap<String, String>();
+        tree.put("Accept", "application/json");
+        tree.put("Content-Type", "application/json; charset=UTF-8");
+
+        tree.put(JsonTag.CELLPHONE, "13641330091");
+        tree.put(JsonTag.CHANNEL_CODE,"991");
+        tree.put(JsonTag.CID, "94d4de5bce31a9ce4554df971755d85e");
+        tree.put(JsonTag.CLIENT_ID, "ffffffff-9ac7-2775-9559-3f580033c587");
+        tree.put(JsonTag.CLIENT_SIGN, CommonDefine.CLENT_SIGN);
+        tree.put(JsonTag.CLIENT_VERSION, CommonDefine.CLIENT_VERSION);
+        tree.put(JsonTag.OS_VERSION, CommonDefine.OS_VERSION);
+        tree.put(JsonTag.PASSWORD, CommonUtil.MD5(CommonUtil.MD5("111111") + "13641330091"));
+        tree.put(JsonTag.PHONE_TYPE,CommonDefine.PHONE_TYPE);
+        tree.put(JsonTag.SIGN, initSign(tree));
+        return tree;
+    }
+
+    private UserApi userApi;
     public void test(){
-        Retrofit.Builder builder = new Retrofit.Builder();
-        builder.baseUrl(CommonDefine.URL_BASE);
-        builder.addConverterFactory(GsonConverterFactory.create());
-        retrofit = builder.build();
-        test test = retrofit.create(test.class);
+
+        userApi = get(UserApi.class);
+        UserApi proxyInterface = RetrofitLifecycle.getProxyInterface(UserApi.class, userApi);
+
+
 
         TreeMap<String, String> tree = new TreeMap<String, String>();
         tree.put("Accept", "application/json");
@@ -139,23 +209,38 @@ public class HttpManager {
         tree.put(JsonTag.SIGN, initSign(tree));
 
 
-        Call<JsonObject> login = test.login(tree);
-        login.enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                String s = response.toString();
-            }
 
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                String message = t.getMessage();
-            }
-        });
+
+        RetrofitLifecycle.cancelAll(proxyInterface);
+
     }
 
-    public interface test{
-        @FormUrlEncoded
-        @POST("user/login/")
-        Call<JsonObject> login(@FieldMap Map<String,String> logMap);
-    }
+
+
+//    public class UserApiInvokeProxy implements UserApi{
+//
+//        private UserApi mInterfaceImpl;
+//
+//        private List<Call> mCallList = Collections.synchronizedList(new ArrayList<Call>());
+//
+//        public UserApiInvokeProxy(UserApi mInterfaceImplByRetrofit) {
+//            this.mInterfaceImpl = mInterfaceImplByRetrofit;
+//        }
+//
+//        @Override
+//        public Call<JsonObject> login(@FieldMap Map<String, String> logMap) {
+//            Call<JsonObject> login = mInterfaceImpl.login(logMap);
+//            mCallList.add(login);
+//            return login;
+//        }
+//
+//        public void cancelAll(Call... excludes){
+//            if (excludes.length >  0 ){
+//                mCallList.removeAll(Arrays.asList(excludes));
+//            }
+//            if (mCallList != null){
+//
+//            }
+//        }
+//    }
 }
