@@ -1,8 +1,9 @@
 package com.tianniu.custom.view.base;
 
-import android.app.Fragment;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.util.SparseArrayCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,4 +71,8 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
         view.setOnClickListener(this);
     }
 
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
 }

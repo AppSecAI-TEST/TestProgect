@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/add"
+        android:id="@+id/main_content"
         android:icon="@drawable/bg_fresh"
         android:title="call" />
     <item
-        android:id="@+id/delete"
+        android:id="@+id/main_oter"
         android:icon="@drawable/bg_fresh"
         android:title="message" />
-    <item
-        android:id="@+id/setting"
-        android:icon="@drawable/distance_mark"
-        android:title="setting" />
 
     <item
-        android:id="@+id/me"
+        android:id="@+id/main_me"
         android:icon="@drawable/distance_mark"
         android:title="me"/>
 </menu>
