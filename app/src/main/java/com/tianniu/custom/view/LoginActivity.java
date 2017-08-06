@@ -128,6 +128,11 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     public void onSuccess(LoginResult loginResult) {
                         startActivity(new Intent(LoginActivity.this,MainActivity.class));
                     }
+
+                    @Override
+                    public void onFailure(int code, String message) {
+                        super.onFailure(code, message);
+                    }
                 });
             }
         });
