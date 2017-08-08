@@ -9,9 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +21,6 @@ import android.widget.Toast;
 
 import com.tianniu.custom.view.base.BaseActivity;
 import com.tianniu.custom.view.base.BaseFragment;
-import com.tianniu.custom.view.custom_view.BottomNavigationViewEx;
 import com.tianniu.custom.view.custom_view.locatonSelectPop.SearchGoodSelector;
 import com.tianniu.custom.view.custom_view.locatonSelectPop.area_page_about.SelectorInfo;
 import com.tianniu.up.testprogect.R;
@@ -32,7 +28,7 @@ import com.tianniu.up.testprogect.R;
 public class MainActivity extends BaseActivity implements BaseFragment.OnFragmentInteractionListener {
 
 
-    private OstlyFragment ostlyFragment;
+    private MostlyFragment mostlyFragment;
     private PushFragment pushFragment;
     private UserFragment userFragment;
     private   Fragment  currentFragment ;
@@ -46,9 +42,9 @@ public class MainActivity extends BaseActivity implements BaseFragment.OnFragmen
     @Override
     public void initView() {
 
-        if (ostlyFragment == null){
-            ostlyFragment = OstlyFragment.newInstance("", "");
-            currentFragment = ostlyFragment;
+        if (mostlyFragment == null){
+            mostlyFragment = MostlyFragment.newInstance("", "");
+            currentFragment = mostlyFragment;
         }
         if (pushFragment == null){
             pushFragment = PushFragment.newInstance("", "");
@@ -58,8 +54,10 @@ public class MainActivity extends BaseActivity implements BaseFragment.OnFragmen
         }
 
 
+
+
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.main_container,ostlyFragment).commitNow();
+        fragmentTransaction.add(R.id.main_container, mostlyFragment).commitNow();
 
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findview(R.id.bottom_menu_group);
@@ -71,7 +69,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.OnFragmen
                 fragmentTransaction.hide(currentFragment);
                 switch (item.getItemId()){
                     case R.id.main_content:
-                        currentFragment = ostlyFragment;
+                        currentFragment = mostlyFragment;
                         break;
                     case R.id.main_oter:
                         currentFragment = pushFragment;
@@ -121,9 +119,6 @@ public class MainActivity extends BaseActivity implements BaseFragment.OnFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-
-
-
 
     }
 

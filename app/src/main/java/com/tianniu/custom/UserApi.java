@@ -21,4 +21,6 @@ public interface UserApi{
     @FormUrlEncoded
     @POST("user/login/")
     Call<HttpResponse<LoginResult>> login(@FieldMap Map<String,String> logMap);
+
+
 }

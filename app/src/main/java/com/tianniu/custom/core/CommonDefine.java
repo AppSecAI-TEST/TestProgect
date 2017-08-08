@@ -19,7 +19,7 @@ public class CommonDefine {
      */
     public static String IDENTITY_LABEL_SERVER_MENU="server_menu";
 
-    public static String CLIENT_VERSION = "3300";
+    public static String CLIENT_VERSION = "3400";
     public static final String VERSION_STRING = "v3.0.0.9";
 
     public static final String UNION_PAY_MODE = "00"; // 01测试 //00正式

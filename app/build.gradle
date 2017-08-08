@@ -8,8 +8,8 @@ android {
         applicationId "com.tianniu.up.testprogect"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 3500
+        versionName "3.5.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -61,6 +61,8 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:5.0'
     compile 'com.j256.ormlite:ormlite-core:5.0'
     compile 'com.android.support:multidex:1.0.1'
+
+    compile 'com.zhy:base-rvadapter:3.0.3'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.0.2'
     compile 'com.android.support:appcompat-v7:25.3.1'

@@ -114,7 +114,6 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
             @Override
             public void onClick(View view) {
 //                attemptLogin();
-                userApi = httpManager.get(UserApi.class);
                 String callPhone = mEmailView.getText().toString();
 
                 String password = mPasswordView.getText().toString();
@@ -122,7 +121,7 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     ToastUtil.showShortToast(mActivity,getString(R.string.error_sign_in_1));
                     return;
                 }
-
+                userApi = httpManager.get(UserApi.class);
                 userApi.login(httpManager.login(callPhone,password)).enqueue(new HttpCallBack<LoginResult>(mActivity) {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
