@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -20,14 +21,7 @@ import com.zhy.adapter.recyclerview.CommonAdapter;
 
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MostlyFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MostlyFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class MostlyFragment extends BaseFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -116,6 +110,7 @@ public class MostlyFragment extends BaseFragment {
             orderInfos.add(orderInfo);
         }
 
+//        rvCargo.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL));
 
         rvCargo.setAdapter(new CommonAdapter<OrderInfo>(getContext(),R.layout.item_rv_cargo,orderInfos) {
             @Override
@@ -124,6 +119,7 @@ public class MostlyFragment extends BaseFragment {
                 tv_cargo_explan.setText(orderInfo.getNickName());
             }
         });
+
 
         // Inflate the layout for this fragment
         return rootview;
@@ -157,15 +153,5 @@ public class MostlyFragment extends BaseFragment {
 
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
 
 }

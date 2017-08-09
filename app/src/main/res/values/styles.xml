@@ -46,4 +46,16 @@
         <item name="android:windowExitAnimation">@anim/push_bottom_out</item>
     </style>
 
+
+
+    <style name="ToolbarStyle" parent="Base.Widget.AppCompat.Toolbar">
+        <item name="android:minHeight">40dp</item>
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetEnd">0dp</item>
+        <item name="contentInsetLeft">0dp</item>
+        <item name="contentInsetRight">0dp</item>
+        <item name="titleMargin">0dp</item>
+    </style>
+
+
 </resources>
