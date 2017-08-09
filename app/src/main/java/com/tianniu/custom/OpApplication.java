@@ -1,6 +1,5 @@
 package com.tianniu.custom;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
@@ -12,11 +11,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.multidex.MultiDex;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tianniu.custom.core.CommonDefine;
 import com.tianniu.custom.core.CommonResources;
@@ -24,7 +19,6 @@ import com.tianniu.custom.model.IdentityInfo;
 import com.tianniu.custom.model.OrderInfo;
 import com.tianniu.custom.model.PersonInfo;
 import com.tianniu.custom.model.PhoneNumber;
-import com.tianniu.custom.utils.LLog;
 import com.tianniu.custom.view.LoginActivity;
 import com.tianniu.up.testprogect.BuildConfig;
 import com.umeng.socialize.Config;
@@ -37,7 +31,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

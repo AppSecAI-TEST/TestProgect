@@ -28,31 +28,17 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.JsonObject;
 import com.tianniu.custom.HttpCallBack;
 import com.tianniu.custom.HttpManager;
-import com.tianniu.custom.HttpResponse;
-import com.tianniu.custom.LoginResult;
-import com.tianniu.custom.UserApi;
-import com.tianniu.custom.core.JsonTag;
 import com.tianniu.custom.model.PersonInfo;
-import com.tianniu.custom.utils.JsonUtils;
+import com.tianniu.custom.api.UserApi;
 import com.tianniu.custom.utils.ToastUtil;
 import com.tianniu.custom.view.base.BaseActivity;
 import com.tianniu.up.testprogect.R;
 import com.tianniu.custom.view.custom_view.InputMethodRelativeLayout;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -122,9 +108,12 @@ public class LoginActivity extends BaseActivity implements LoaderCallbacks<Curso
                     return;
                 }
                 userApi = httpManager.get(UserApi.class);
-                userApi.login(httpManager.login(callPhone,password)).enqueue(new HttpCallBack<LoginResult>(mActivity) {
+                userApi.login(httpManager.login(callPhone,password)).enqueue(new HttpCallBack<PersonInfo>(mActivity) {
                     @Override
-                    public void onSuccess(LoginResult loginResult) {
+                    public void onSuccess(PersonInfo personInfo) {
+                        if (personInfo != null){
+                            mApp.setPersonInfo(personInfo);
+                        }
                         startActivity(new Intent(LoginActivity.this,MainActivity.class));
                     }
 

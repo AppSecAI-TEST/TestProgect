@@ -1,6 +1,7 @@
 package com.tianniu.custom.view;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,13 +14,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.tianniu.custom.HttpCallBack;
+import com.tianniu.custom.HttpManager;
+import com.tianniu.custom.OpApplication;
 import com.tianniu.custom.adapter.ViewHolder;
+import com.tianniu.custom.api.CargoApi;
 import com.tianniu.custom.model.OrderInfo;
+import com.tianniu.custom.model.PersonInfo;
+import com.tianniu.custom.model.QueryInfo;
 import com.tianniu.custom.view.base.BaseFragment;
 import com.tianniu.up.testprogect.R;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MostlyFragment extends BaseFragment {
@@ -38,15 +46,7 @@ public class MostlyFragment extends BaseFragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OstlyFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static MostlyFragment newInstance(String param1, String param2) {
         MostlyFragment fragment = new MostlyFragment();
         Bundle args = new Bundle();
@@ -66,6 +66,11 @@ public class MostlyFragment extends BaseFragment {
     }
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+    }
+
+    @Override
     public int getLayoutId() {
         return 0;
     }
@@ -81,8 +86,31 @@ public class MostlyFragment extends BaseFragment {
 
     }
 
+
     @Override
     public void initData() {
+        if (getActivity() == null)
+            return;
+        OpApplication applicationInfo = (OpApplication)getActivity().getApplication();
+        PersonInfo personInfo = applicationInfo.getPersonInfo();
+        CargoApi cargoApi = HttpManager.getInstance().get(CargoApi.class);
+
+        QueryInfo queryInfo = new QueryInfo();
+        queryInfo.setUserId(personInfo.getId());
+        queryInfo.setTicket(personInfo.getTicket());
+        queryInfo.setStartCoord("440.18,4424.29");
+        queryInfo.setStartLonLat("116.3,39.95");
+        queryInfo.setStartDistance("500");
+        queryInfo.setQueryType(1);
+
+        cargoApi.searchCargo(HttpManager.getInstance().searchCargo(queryInfo)).enqueue(new HttpCallBack<List<OrderInfo>>(getActivity()) {
+            @Override
+            public void onSuccess(List<OrderInfo> orderInfos) {
+                if (orderInfos != null){
+                    String taskContent = orderInfos.get(1).getTaskContent();
+                }
+            }
+        });
 
     }
 
@@ -121,6 +149,7 @@ public class MostlyFragment extends BaseFragment {
         });
 
 
+
         // Inflate the layout for this fragment
         return rootview;
     }
@@ -130,6 +159,12 @@ public class MostlyFragment extends BaseFragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        initData();
     }
 
     @Override

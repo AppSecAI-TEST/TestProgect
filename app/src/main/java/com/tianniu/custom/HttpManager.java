@@ -2,23 +2,24 @@ package com.tianniu.custom;
 
 import android.text.TextUtils;
 
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.tianniu.custom.api.UserApi;
 import com.tianniu.custom.core.CommonDefine;
 import com.tianniu.custom.core.JsonTag;
+import com.tianniu.custom.model.QueryInfo;
+import com.tianniu.custom.utils.Bean2Map;
 import com.tianniu.custom.utils.CommonUtil;
 import com.tianniu.custom.utils.SignUtil;
+
+import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.andydev.retrofit.lifecycle.RetrofitLifecycle;
-import me.andydev.retrofit.lifecycle.common.RetrofitInterface;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Administrator on 2017/6/7 0007.
@@ -75,6 +76,13 @@ public class HttpManager {
         return tree;
     }
 
+    protected TreeMap<String, String> convertToTreeMap(QueryInfo query){
+        Gson g=new Gson();
+        String jsonString= g.toJson(query).toString();
+        TreeMap<String, String> result= g.fromJson(jsonString,new TypeToken<TreeMap<String, String>>(){}.getType());
+        return result;
+    }
+
 
 
     /**
@@ -86,6 +94,17 @@ public class HttpManager {
         treeMap.put(JsonTag.CHANNEL_CODE,"991"); //TODO 测试数据
         treeMap.put(JsonTag.CID, "94d4de5bce31a9ce4554df971755d85e"); //测试数据
         treeMap.put(JsonTag.PASSWORD, CommonUtil.MD5(CommonUtil.MD5(password) + cellPhone));
+        treeMap.put(JsonTag.SIGN, initSign(treeMap));
+        return treeMap;
+    }
+
+
+    /**
+     * 搜索 v
+     */
+    public TreeMap<String, String> searchCargo(QueryInfo queryInfo) {
+        TreeMap<String, String> treeMap = initCustomParamsMap();
+        treeMap = Bean2Map.getInstance().bean2Map(queryInfo, treeMap);
         treeMap.put(JsonTag.SIGN, initSign(treeMap));
         return treeMap;
     }
