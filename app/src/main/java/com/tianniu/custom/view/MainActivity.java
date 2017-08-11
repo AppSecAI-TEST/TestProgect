@@ -90,13 +90,13 @@ public class MainActivity extends BaseActivity implements BaseFragment.OnFragmen
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//            }
+//        });
     }
 
     @Override
@@ -173,7 +173,7 @@ public class MainActivity extends BaseActivity implements BaseFragment.OnFragmen
         @Override
         public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView tvStartPostion = (TextView) rootView.findViewById(R.id.tv_start_postion);
+            TextView tvStartPostion = (TextView) rootView.findViewById(R.id.tv_cargo_explan);
             tvStartPostion.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {

@@ -1,10 +1,8 @@
 package com.tianniu.custom.view;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,10 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.jcodecraeer.xrecyclerview.ProgressStyle;
+import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.tianniu.custom.HttpCallBack;
 import com.tianniu.custom.HttpManager;
 import com.tianniu.custom.OpApplication;
-import com.tianniu.custom.adapter.ViewHolder;
 import com.tianniu.custom.api.CargoApi;
 import com.tianniu.custom.model.OrderInfo;
 import com.tianniu.custom.model.PersonInfo;
@@ -41,6 +40,7 @@ public class MostlyFragment extends BaseFragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private XRecyclerView rvCargo;
 
     public MostlyFragment() {
         // Required empty public constructor
@@ -106,8 +106,26 @@ public class MostlyFragment extends BaseFragment {
         cargoApi.searchCargo(HttpManager.getInstance().searchCargo(queryInfo)).enqueue(new HttpCallBack<List<OrderInfo>>(getActivity()) {
             @Override
             public void onSuccess(List<OrderInfo> orderInfos) {
-                if (orderInfos != null){
-                    String taskContent = orderInfos.get(1).getTaskContent();
+                if (orderInfos != null && rvCargo != null){
+                    rvCargo.setAdapter(new CommonAdapter<OrderInfo>(getContext(),R.layout.item_rv_cargo,orderInfos) {
+                        @Override
+                        protected void convert(com.zhy.adapter.recyclerview.base.ViewHolder holder, OrderInfo orderInfo, int position) {
+                            String startPoint = orderInfo.getStartPoint();
+                            String destPoint = orderInfo.getDestPoint();
+                            String taskContent = orderInfo.getTaskContent();
+                            String nickName = orderInfo.getNickName();
+                            long publishTime = orderInfo.getPublishTime();
+
+                            TextView tv_start_point = holder.getView(R.id.tv_start_point);
+                            TextView tv_dest_postion = holder.getView(R.id.tv_dest_postion);
+                            TextView tv_cargo_explan = holder.getView(R.id.tv_cargo_explan);
+                            TextView tv_publish_nickname = holder.getView(R.id.tv_publish_nickname);
+                            tv_start_point.setText(startPoint);
+                            tv_dest_postion.setText(destPoint);
+                            tv_cargo_explan.setText(taskContent);
+                            tv_publish_nickname.setText(nickName);
+                        }
+                    });
                 }
             }
         });
@@ -128,25 +146,37 @@ public class MostlyFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootview = inflater.inflate(R.layout.fragment_oostly, container, false);
-        RecyclerView rvCargo = (RecyclerView) rootview.findViewById(R.id.recyclerView_cargo_content);
+        rvCargo = (XRecyclerView) rootview.findViewById(R.id.recyclerView_cargo_content);
         rvCargo.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvCargo.setLoadingMoreEnabled(true);
+        rvCargo.setLoadingMoreProgressStyle(ProgressStyle.BallBeat);
+//        rvCargo.addItemDecoration(new DividerItemDecoration(getContext(),DividerItemDecoration.VERTICAL));
+        rvCargo.setLoadingListener(new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+                rvCargo.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rvCargo.refreshComplete();
+                    }
+                },2000);
+            }
 
-        ArrayList<OrderInfo> orderInfos = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            OrderInfo orderInfo = new OrderInfo();
-            orderInfo.setNickName("测试"+i);
-            orderInfos.add(orderInfo);
-        }
+            @Override
+            public void onLoadMore() {
+                rvCargo.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rvCargo.refreshComplete();
+                    }
+                },2000);
+            }
+        });
+
 
 //        rvCargo.addItemDecoration(new DividerItemDecoration(getActivity(),DividerItemDecoration.VERTICAL));
 
-        rvCargo.setAdapter(new CommonAdapter<OrderInfo>(getContext(),R.layout.item_rv_cargo,orderInfos) {
-            @Override
-            protected void convert(com.zhy.adapter.recyclerview.base.ViewHolder holder, OrderInfo orderInfo, int position) {
-                TextView tv_cargo_explan = holder.getView(R.id.tv_cargo_explan);
-                tv_cargo_explan.setText(orderInfo.getNickName());
-            }
-        });
+
 
 
 
